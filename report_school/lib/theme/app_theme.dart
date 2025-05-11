@@ -18,6 +18,7 @@ class AppTheme {
     return ThemeData(
       brightness: Brightness.light,
       primaryColor: primaryColor,
+      secondaryHeaderColor: Color(0xFFF5F5F5), // Abu terang
       scaffoldBackgroundColor: backgroundColor,
       appBarTheme: const AppBarTheme(
         backgroundColor: primaryColor,

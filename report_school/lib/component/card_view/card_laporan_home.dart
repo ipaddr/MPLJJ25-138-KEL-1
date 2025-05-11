@@ -28,7 +28,6 @@ class CardLaporan extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // color card
 
             // Baris 1: Judul & Tanggal
             Row(
@@ -98,10 +97,7 @@ class CardLaporan extends StatelessWidget {
                           provider.updateRating(laporan, index + 1);
                         },
                       );
-                    }).expand((widget) sync* {
-                      yield widget;
-                      yield const SizedBox(width: 4);
-                    }).toList(),
+                    }),
                   ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(

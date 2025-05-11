@@ -1,0 +1,43 @@
+lib/
+│
+├── api/               // File koneksi API & service
+│   ├── laporan_api.dart
+│   ├── auth_api.dart
+│   └── ...
+│
+├── component/         // Komponen UI yang bisa dipakai ulang
+│   ├── form_view/
+│   ├── list_view/
+│   ├── detail_view/
+│   ├── card_view/
+│   └── ...
+│
+├── middleware/        // Filter / auth check / role checking
+│   └── check_role.dart
+│
+├── models/            // Model data dari JSON/API
+│   ├── laporan.dart
+│   ├── user.dart
+│   └── ...
+│
+├── pages/             // Halaman (UI utama)
+│   ├── home_page.dart
+│   ├── login_page.dart
+│   ├── sign_in_page.dart
+│   ├── list_laporan_user.dart
+│   └── ...
+│
+├── providers/         // State management (pakai Provider)
+│   ├── auth_provider.dart
+│   ├── laporan_provider.dart
+│   ├── progres_provider.dart
+│   └── ...
+│
+├── theme/             // Custom theme (colors, fonts, dsb.)
+│   └── app_theme.dart
+│
+├── utils/             // Fungsi-fungsi kecil bantu
+│   ├── validator.dart
+│   └── formatter.dart
+│
+├── main.dart
