@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../theme/app_theme.dart';
 import '../providers/home_provider.dart';
 import '../providers/pengumuman_provider.dart'; // Import PengumumanProvider
 import '../component/card_view/card_laporan_home.dart';
 import '../component/card_view/card_pengumuman.dart'; // Import CardPengumuman
-import '../component/nav/bottom_navigation.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,8 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0; // Define the _selectedIndex variable
-
   @override
   void initState() {
     super.initState();
@@ -37,7 +35,6 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
         child: ListView(
           children: [
-            const SizedBox(height: 20), 
             // Pengumuman Section
             Text(
               'Pengumuman', // Judul Pengumuman
@@ -93,13 +90,17 @@ class _HomePageState extends State<HomePage> {
           ],
         ),        
       ),
-      bottomNavigationBar: BottomNav(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
+      floatingActionButton: FloatingActionButton(
+
+        onPressed: () {
+          // Aksi ketika tombol diklik
         },
+        backgroundColor: AppTheme.greenCard_185,// Warna background tombol
+        tooltip: "Tambah Laporan",
+        child: Icon(
+          Icons.add,
+          color: AppTheme.white, // Warna ikon
+        ),
       ),
     );
   }

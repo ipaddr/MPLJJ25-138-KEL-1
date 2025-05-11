@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import './theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'pages/home_page.dart';
+import 'pages/nav_app.dart';
 import 'providers/home_provider.dart';
-import 'providers/pengumuman_provider.dart'; // Import PengumumanProvider
+import 'providers/pengumuman_provider.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Report School',
       theme: AppTheme.lightTheme,
-      home: HomePage(),
+      home: NavApp(),
     );
   }
 }

@@ -5,7 +5,7 @@ class HomeProvider with ChangeNotifier {
   final List<Laporan> _laporanList = [];
 
   List<Laporan> get laporanList => _laporanList;
-
+  
   void addDummyData() {
     _laporanList.addAll([
       Laporan(

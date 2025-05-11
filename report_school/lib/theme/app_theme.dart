@@ -4,6 +4,9 @@ class AppTheme {
   static const Color primaryColor = Color(0xFF4F9CF9); // Biru dari Figma
   static const Color backgroundColor = Color(0xFFF5F5F5); // Abu terang
   static const Color accentColor = Color(0xFF1E88E5); // Biru sedikit lebih gelap
+  static const Color black = Color(0xFF212121); // Hitam
+  static const Color white = Color(0xFFFFFFFF); // Putih
+  static const Color white_185 = Color.fromARGB(185, 255, 255, 255); // Putih
 
   static const Color successColor = Color(0xFF4CAF50); // Hijau
   static const Color warningColor = Color(0xFFFFA726); // Oranye
@@ -13,6 +16,10 @@ class AppTheme {
   static const Color textColorWhite = Color(0xFFFFFFFF); // Putih
   static const Color redCard = Color(0xFFEF5350); // Merah untuk card
   static const Color blueCard = Color(0xFF42A5F5); // Biru untuk card
+
+  static const Color greenCard = Color(0xFF66BB6A); // Hijau untuk card
+  static const Color greenCard_185 = Color.fromARGB(185, 102, 187, 106); // Hijau untuk card
+
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -27,6 +34,7 @@ class AppTheme {
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: primaryColor,
+        foregroundColor: Color(0xFFFF9149),
       ),
       colorScheme: ColorScheme.light(
         primary: primaryColor,
@@ -47,6 +55,7 @@ class AppTheme {
         labelLarge: TextStyle(fontSize: 12, color: Colors.black54),
         labelMedium: TextStyle(fontSize: 18, color: Colors.black54),
         labelSmall: TextStyle(fontSize: 11, color: Colors.black54),
+        headlineSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
       ),
       fontFamily: 'Poppins',
     );
