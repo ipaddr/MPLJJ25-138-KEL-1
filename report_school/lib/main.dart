@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'pages/nav_app.dart';
 import 'providers/home_provider.dart';
-import 'providers/pengumuman_provider.dart'; 
+import 'providers/pengumuman_provider.dart';
+import 'providers/progres_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => PengumumanProvider()),
+        ChangeNotifierProvider(create: (_) => ProgressProvider()),
       ],
       child: const MyApp(),
     ),

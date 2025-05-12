@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_page.dart';
-import 'list_laporan.dart';
+import 'list_laporan_page.dart';
+import 'list_progres_page.dart';
 import '../component/nav/bottom_navigation.dart';
 
 class NavApp extends StatefulWidget {
@@ -16,6 +17,7 @@ class _NavAppState extends State<NavApp> {
   final List<Widget> _pages = const [
     HomePage(),
     ListLaporanPage(),
+    ListProgresPage(),
   ];
 
   @override
