@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:report_school/pages/login_page.dart';
+import 'package:report_school/pages/register_page.dart';
 import './theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -6,6 +8,8 @@ import 'pages/nav_app.dart';
 import 'providers/home_provider.dart';
 import 'providers/pengumuman_provider.dart';
 import 'providers/progres_provider.dart';
+import './controller/sekolah_controller.dart';
+import '../providers/file_pendukung_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +20,10 @@ void main() async {
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => PengumumanProvider()),
         ChangeNotifierProvider(create: (_) => ProgressProvider()),
+        ChangeNotifierProvider(
+          create: (_) => SekolahController()..loadDummyData(),
+        ),
+        ChangeNotifierProvider(create: (_) => FilePendukungProvider()),
       ],
       child: const MyApp(),
     ),
@@ -30,7 +38,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Report School',
       theme: AppTheme.lightTheme,
-      home: NavApp(),
+      home: LoginPage(),
     );
   }
 }
