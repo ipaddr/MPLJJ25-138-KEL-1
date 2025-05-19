@@ -4,6 +4,7 @@ import '../../models/laporan.dart';
 import 'package:provider/provider.dart';
 import '../../providers/home_provider.dart';
 import '../../theme/app_theme.dart';
+import '../../pages/detail_laporan_page.dart';
 
 class CardLaporan extends StatelessWidget {
   final Laporan laporan;
@@ -66,7 +67,9 @@ class CardLaporan extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    // TODO: Navigasi ke halaman detail
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => const DetailLaporanPage(),
+                    ));
                   },
                   child: const Text(
                     'Detail Laporan',

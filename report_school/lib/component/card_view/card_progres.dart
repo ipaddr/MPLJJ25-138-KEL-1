@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../theme/app_theme.dart';
-import '../../models/progres.dart'; // Pastikan ini path yang benar ke file model Pengumuman
+import '../../models/progres.dart';
+import '../../pages/detail_laporan_page.dart';
 
 class CardProgress extends StatelessWidget {
   
@@ -60,7 +61,9 @@ class CardProgress extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    // TODO: Navigasi ke halaman detail progress
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => const DetailLaporanPage(),
+                    ));
                   },
                   child: const Text(
                     'Detail Progress',

@@ -108,6 +108,7 @@ class _FormRegisterState extends State<FormRegister> {
               obscureText: _obscurePassword,
               decoration: InputDecoration(
                 hintText: '••••••••••',
+                // ignore: deprecated_member_use
                 hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
                 filled: true,
                 fillColor: widget.fieldColor,
