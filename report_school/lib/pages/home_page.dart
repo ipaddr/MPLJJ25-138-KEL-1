@@ -125,8 +125,8 @@ Widget build(BuildContext context) {
             backgroundColor: Colors.orange,
             tooltip: "Analisis Laporan",
             child: Icon(Icons.analytics, color: AppTheme.white),
-          ),
-        ),
+          ),
+        ),
       ],
     ),
   );

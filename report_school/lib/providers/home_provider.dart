@@ -24,7 +24,7 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateRating(Laporan laporan, int newRating) {
+  void updateRating(Laporan laporan, double newRating) {
     laporan.rating = newRating;
     notifyListeners();
   }

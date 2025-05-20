@@ -3,13 +3,13 @@ class Laporan {
   final String deskripsi;
   final String namaPengirim;
   final DateTime tanggal;
-  int rating;
+  double rating;
 
   Laporan({
     required this.judul,
-    required this.deskripsi,
+    this.deskripsi = '',
     required this.namaPengirim,
     required this.tanggal,
-    this.rating = 0,
+    this.rating = 0.0,
   });
 }
