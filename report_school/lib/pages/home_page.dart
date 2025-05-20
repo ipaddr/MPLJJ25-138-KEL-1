@@ -7,6 +7,7 @@ import '../providers/home_provider.dart';
 import '../providers/pengumuman_provider.dart'; // Import PengumumanProvider
 import '../component/card_view/card_laporan_home.dart';
 import '../component/card_view/card_pengumuman.dart'; // Import CardPengumuman
+import '../pages/admin/analisis_laporan_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -110,7 +111,22 @@ Widget build(BuildContext context) {
             child: Icon(Icons.add, color: AppTheme.white),
           ),
         ),
-        // Button untuk analisis laporan (segera dibuat)
+        // Button untuk analisis laporan
+        Positioned(
+          bottom: 16,
+          right: 70,
+          child: FloatingActionButton(
+            heroTag: "fabAnalisis",
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => const ListLaporanPageAnalisis(),
+              ));
+            },
+            backgroundColor: Colors.orange,
+            tooltip: "Analisis Laporan",
+            child: Icon(Icons.analytics, color: AppTheme.white),
+          ),
+        ),
       ],
     ),
   );
