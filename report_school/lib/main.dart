@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Report School',
       theme: AppTheme.lightTheme,
-      home: UploadDokumenWindow(),
+      home: LoginPage(),
     );
   }
 }
