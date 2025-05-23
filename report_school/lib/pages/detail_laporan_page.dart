@@ -14,15 +14,15 @@ class DetailLaporanPage extends StatelessWidget {
       ),
       body: SingleChildScrollView( // Pakai scroll agar tidak overflow
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // ... komponen lainnya misalnya judul, deskripsi, dsb.
-
               const CardDetailLaporan(),
               // === Tambahkan CardFilePendukung di sini ===
-              const CardFilePendukung(),
+              
+              CardFilePendukung(),
             ],
           ),
         ),

@@ -30,13 +30,16 @@ class CardLaporanAnalisis extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  laporan.judul,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    laporan.judul,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
+                const SizedBox(width: 16), // Jarak antara judul dan tanggal
                 Text(
                   tanggalFormatted,
                   style: const TextStyle(

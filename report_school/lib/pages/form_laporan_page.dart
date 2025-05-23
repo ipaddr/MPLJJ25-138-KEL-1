@@ -21,7 +21,7 @@ class _ListLaporanPageState extends State<FormLaporanPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Form Laporan')),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(12.0),
         child: ListView(
           children: [
             const SizedBox(height: 4),

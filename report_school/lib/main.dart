@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:report_school/pages/login_page.dart';
-import 'package:report_school/pages/register_page.dart';
 import './theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
+// ignore: unused_import
 import 'pages/nav_app.dart';
 import 'providers/home_provider.dart';
 import 'providers/pengumuman_provider.dart';

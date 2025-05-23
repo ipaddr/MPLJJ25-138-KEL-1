@@ -13,12 +13,14 @@ class HomeProvider with ChangeNotifier {
         deskripsi: 'Atap bocor saat hujan.',
         namaPengirim: 'Pak Rudi',
         tanggal: DateTime(2025, 12, 23),
+        rating: 4.7
       ),
       Laporan(
         judul: 'Meja Tidak Cukup',
         deskripsi: 'Kursi dan meja tidak memadai.',
         namaPengirim: 'Bu Ani',
         tanggal: DateTime(2025, 12, 22),
+        rating: 3.5
       ),
     ]);
     notifyListeners();

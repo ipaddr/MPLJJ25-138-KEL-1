@@ -27,6 +27,14 @@ class AppTheme {
     106,
   ); // Hijau untuk card
 
+  static const Color orangeCard = Color(0xFFFFA726); // Oranye untuk card
+  static const Color orangeCard_185 = Color.fromARGB(
+    185,
+    255,
+    167,
+    38,
+  ); // Oranye untuk card
+
   static const Color blueOld = Color(0xFF344CB7);
 
   static ThemeData get lightTheme {

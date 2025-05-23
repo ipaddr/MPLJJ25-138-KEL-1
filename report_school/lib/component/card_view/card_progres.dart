@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../theme/app_theme.dart';
 import '../../models/progres.dart';
-import '../../pages/detail_laporan_page.dart';
+import '../../pages/detail_progres_page.dart';
 
 class CardProgress extends StatelessWidget {
   
@@ -62,7 +62,7 @@ class CardProgress extends StatelessWidget {
                   ),
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => const DetailLaporanPage(),
+                      builder: (context) => const DetailProgresPage(),
                     ));
                   },
                   child: const Text(

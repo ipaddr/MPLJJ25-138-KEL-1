@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../pages/form_laporan_page.dart';
-import 'package:report_school/pages/login_page.dart';
 import '../theme/app_theme.dart';
 import '../providers/home_provider.dart';
 import '../providers/pengumuman_provider.dart'; // Import PengumumanProvider
@@ -98,7 +97,7 @@ Widget build(BuildContext context) {
         // --- Floating Buttons ---
         Positioned(
           bottom: 16,
-          right: 0,
+          right: 16,
           child: FloatingActionButton(
             heroTag: "fabTambah",
             onPressed: () {
@@ -114,7 +113,7 @@ Widget build(BuildContext context) {
         // Button untuk analisis laporan
         Positioned(
           bottom: 16,
-          right: 70,
+          right: 86,
           child: FloatingActionButton(
             heroTag: "fabAnalisis",
             onPressed: () {
@@ -122,9 +121,43 @@ Widget build(BuildContext context) {
                 builder: (context) => const ListLaporanPageAnalisis(),
               ));
             },
-            backgroundColor: Colors.orange,
+            backgroundColor: AppTheme.orangeCard_185,
             tooltip: "Analisis Laporan",
             child: Icon(Icons.analytics, color: AppTheme.white),
+          ),
+        ),
+        // Button untuk tambah Progres
+        Positioned(
+          bottom: 16 + 70,
+          right: 16,
+          child: FloatingActionButton(
+            heroTag: "fabTambahProgres",
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => const ListLaporanPageAnalisis(),
+              ));
+            },
+            backgroundColor: AppTheme.greenCard_185,
+            tooltip: "Tambah Progres",
+           child:
+            Stack(
+              alignment: Alignment.topRight,
+              children: [
+                Icon(Icons.insert_chart_outlined, size: 32, color: AppTheme.white),
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.teal,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(2),
+                    child: const Icon(Icons.add, size: 12, color: Colors.white),
+                  ),
+                ),
+              ],
+            )
           ),
         ),
       ],
