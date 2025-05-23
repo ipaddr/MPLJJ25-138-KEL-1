@@ -10,6 +10,7 @@ import 'providers/pengumuman_provider.dart';
 import 'providers/progres_provider.dart';
 import './controller/sekolah_controller.dart';
 import '../providers/file_pendukung_provider.dart';
+import 'component/window/insert_gambar_window.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Report School',
       theme: AppTheme.lightTheme,
-      home: LoginPage(),
+      home: UploadDokumenWindow(),
     );
   }
 }
