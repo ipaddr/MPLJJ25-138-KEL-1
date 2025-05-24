@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'dart:typed_data';
 import '../models/file_pendukung.dart';
 
 class FilePendukungProvider with ChangeNotifier {
@@ -22,6 +23,7 @@ class FilePendukungProvider with ChangeNotifier {
           FilePendukung(
             path: file.path ?? '', // Web kadang null path, bisa simpan `file.bytes` kalau perlu
             tipe: FileTypePendukung.gambar,
+            bytes: file.bytes ?? Uint8List(0), // Simpan bytes untuk web
           ),
         );
         notifyListeners();

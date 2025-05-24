@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../component/window/konfirmasi_window.dart';
 
 class UploadDokumenWindow extends StatelessWidget {
   const UploadDokumenWindow({super.key});
@@ -14,7 +15,7 @@ class UploadDokumenWindow extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -72,7 +73,8 @@ class UploadDokumenWindow extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Tambahkan fungsi kirim
+                // Tampilkan dialog konfirmasi
+                _tampilkanDialog(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue[600],
@@ -85,7 +87,7 @@ class UploadDokumenWindow extends StatelessWidget {
                 ),
               ),
               child: const Text(
-                "Kirim Dokumen Pendukung",
+                "Submit",
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -94,4 +96,31 @@ class UploadDokumenWindow extends StatelessWidget {
       ),
     );
   }
+
+  void _tampilkanDialog(BuildContext context) async {
+  final result = await showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        backgroundColor: Colors.transparent, // biar cardnya terlihat clean
+        child: SystemMessageCard(
+          message: "Apakah Anda yakin ingin mengunggah dokumen ini?",
+          yesText: "Ya",
+          noText: "Batal",
+        ),
+      );
+    },
+  );
+
+  if (result == true) {
+    // Lakukan aksi jika menekan "Ya"
+    // Tutup dialog dan lakukan aksi yang diinginkan
+  } else {
+    // Tidak melakukan apa-apa jika batal
+    // Dialog sudah tertutup secara otomatis
+  }
+ 
+  }
+
 }
+

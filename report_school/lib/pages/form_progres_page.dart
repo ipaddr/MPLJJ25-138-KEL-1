@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../component/form/form_laporan.dart';
 import '../controller/sekolah_controller.dart';
 import 'package:provider/provider.dart';
+import '../component/form/form_progres.dart';
 
 
-class FormLaporanPage extends StatefulWidget {
-  const FormLaporanPage({super.key});
+class FormProgresPage extends StatefulWidget {
+  const FormProgresPage({super.key});
 
   @override
   State createState() => _ListLaporanPageState();
 }
 
-class _ListLaporanPageState extends State<FormLaporanPage> {
+class _ListLaporanPageState extends State<FormProgresPage> {
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class _ListLaporanPageState extends State<FormLaporanPage> {
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                LaporanFormCard(
+                LaporanProgresCard(
                   judulController: sekolahCtrl.judulController,
                   isiController: sekolahCtrl.isiController,
                   selectedSekolah: sekolahCtrl.selectedSekolah,

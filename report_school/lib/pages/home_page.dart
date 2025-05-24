@@ -7,6 +7,7 @@ import '../providers/pengumuman_provider.dart'; // Import PengumumanProvider
 import '../component/card_view/card_laporan_home.dart';
 import '../component/card_view/card_pengumuman.dart'; // Import CardPengumuman
 import '../pages/admin/analisis_laporan_page.dart';
+import '../pages/form_progres_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -134,7 +135,7 @@ Widget build(BuildContext context) {
             heroTag: "fabTambahProgres",
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(
-                builder: (context) => const ListLaporanPageAnalisis(),
+                builder: (context) => const FormProgresPage(),
               ));
             },
             backgroundColor: AppTheme.greenCard_185,

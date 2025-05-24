@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:report_school/component/window/result_analisis_window.dart';
 import '../../models/laporan.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -127,7 +128,8 @@ class CardLaporanAnalisis extends StatelessWidget {
                     width: 130,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Aksi untuk analisis
+                        // Buka dialog analisis
+                        _showAnalisisDialog(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.amber,
@@ -147,6 +149,22 @@ class CardLaporanAnalisis extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  // Fungsi untuk menampilkan dialog analisis
+  void _showAnalisisDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: ResultAnalisisWindow()
+        );
+          
+      },
     );
   }
 }

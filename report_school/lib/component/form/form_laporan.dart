@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'form_file_pendukung.dart';
 
 class LaporanFormCard extends StatelessWidget {
   final TextEditingController judulController;
@@ -19,7 +20,8 @@ class LaporanFormCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Text(
           'Informasi Umum',
@@ -81,6 +83,12 @@ class LaporanFormCard extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(height: 10),
+        const Text(
+          'File Pendukung',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        FormFilePendukung(),
       ],
     );
   }

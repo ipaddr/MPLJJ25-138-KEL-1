@@ -21,7 +21,6 @@ class DetailLaporanPage extends StatelessWidget {
             children: [
               const CardDetailLaporan(),
               // === Tambahkan CardFilePendukung di sini ===
-              
               CardFilePendukung(),
             ],
           ),
