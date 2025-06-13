@@ -11,22 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
+        # Create table for users
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
+            $table->id('id_user');
+            $table->string('username')->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->enum('role', ['admin', 'user'])->default('user');
+            $table->float('rating')->default(0.0);
+            # $table->rememberToken(); // Hanya untuk fitur "Remember Me" pada login Web
             $table->timestamps();
         });
 
+        # Create table for password reset tokens
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
+        # Create table for sessions
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
