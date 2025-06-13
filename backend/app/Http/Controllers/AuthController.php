@@ -19,22 +19,23 @@ class AuthController extends Controller
     // Register user + kirim email verifikasi
     public function register(Request $request)
     {
-        // Buat nama acak kalau tidak dikirim
-        if (empty($request->input('name'))) {
-            $name = 'Guest_' . rand(1000, 9999);
-            $request->merge(['name' => $name]);
+        // Buat username acak kalau tidak dikirim
+        if (empty($request->input('username'))) {
+            // Buat username acak untuk guest user
+            $username = 'Guest_' . rand(1000, 9999);
+            $request->merge(['username' => $username]);
         }
 
         // Validasi input
         $request->validate([
-            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
         ]);
 
         // Buat user dengan email belum terverifikasi
         $user = User::create([
-            'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'user', // Default role (yang daftar hanya bisa user)
@@ -81,6 +82,14 @@ class AuthController extends Controller
 
         // Kirim ulang email verifikasi
         $this->sendVerificationEmail($user);
+
+        if (!$user) {
+            return response()->json(['message' => 'Email tidak ditemukan.'], 404);
+        }
+
+        if ($user->email_verified_at) {
+            return response()->json(['message' => 'Email sudah terverifikasi.'], 422);
+        }
 
         return response()->json(['message' => 'Code verifikasi telah dikirim ulang. Silakan cek email Anda.'], 200);
     }

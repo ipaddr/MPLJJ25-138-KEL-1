@@ -17,13 +17,12 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
+
+    protected $primaryKey = 'id_user';
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
-        'role',
-        'rating',
-        'email_verification_token',
     ];
 
     /**
@@ -34,7 +33,6 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         #'remember_token', // Hanya untuk fitur "Remember Me" pada login Web
-        'email_verification_token',
     ];
 
     /**
