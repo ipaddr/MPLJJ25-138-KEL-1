@@ -4,15 +4,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\ProgressController;
-
+use App\Http\Controllers\SekolahController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-
 // Api routes for authentication
-Route::middleware('guest')->group(function () {
+Route::middleware('guest')->withoutMiddleware(VerifyCsrfToken::class)->group(function () {
     Route::post('/api/register', [AuthController::class, 'register']);
     Route::post('/api/login', [AuthController::class, 'login']);
     Route::post('/api/verify_code', [AuthController::class, 'verifyCode']);
@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Api routes for Laporan
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->group(function ()  {
     Route::get('/api/laporan', [LaporanController::class, 'index']);
     Route::post('/api/laporan', [LaporanController::class, 'store']);
     Route::put('/api/laporan/{id}', [LaporanController::class, 'update']);
@@ -38,9 +38,17 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Api routes for Progress
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->group(function () {
     Route::get('/api/progress', [ProgressController::class, 'index']);
     Route::post('/api/progress', [ProgressController::class, 'store']);
     Route::put('/api/progress/{id}', [ProgressController::class, 'update']);
     Route::delete('/api/progress/{id}', [ProgressController::class, 'destroy']);
+});
+
+// Api untuk data sekolah
+Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->group(function () {
+    Route::get('/api/sekolah', [SekolahController::class, 'index']);
+    Route::post('/api/sekolah', [SekolahController::class, 'store']);
+    Route::put('/api/sekolah/{id}', [SekolahController::class, 'update']);
+    Route::delete('/api/sekolah/{id}', [SekolahController::class, 'destroy']);
 });

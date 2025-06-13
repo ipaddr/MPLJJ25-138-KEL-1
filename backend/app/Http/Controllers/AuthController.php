@@ -235,6 +235,10 @@ class AuthController extends Controller
                 'message' => ['Password atau email salah.'],
             ]);
         }
+        
+        // Generate token untuk mobile app
+        // Jika menggunakan Laravel Sanctum, bisa digunakan untuk mobile app
+        $token = $user->createToken('mobile_token')->plainTextToken;
 
         // Login user
         Auth::login($user);
@@ -243,6 +247,7 @@ class AuthController extends Controller
         $user->makeHidden(['password', 'email_verification_token', 'email_verified_at']);
         return response()->json([
             'message' => 'Login berhasil',
+            'token' => $token, // Token untuk mobile app
             'user' => $user,
         ]);
     }

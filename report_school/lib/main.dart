@@ -21,7 +21,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => PengumumanProvider()),
         ChangeNotifierProvider(create: (_) => ProgressProvider()),
         ChangeNotifierProvider(
-          create: (_) => SekolahController()..loadDummyData(),
+          create: (_) => SekolahController(),
+          lazy: false, // Initialize SekolahController immediately
         ),
         ChangeNotifierProvider(create: (_) => FilePendukungProvider()),
       ],
