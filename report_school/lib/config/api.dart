@@ -20,6 +20,7 @@ const apiGetUser = '$apiHost:$apiPort/api/get_user';
 
 // Laporan routes
 const apiGetLaporan = '$apiHost:$apiPort/api/laporan';
+const apiGetDetailLaporan = '$apiHost:$apiPort/api/laporan/{id}';
 const apiCreateLaporan = '$apiHost:$apiPort/api/laporan';
 String apiUpdateLaporan(int id) => '$apiHost:$apiPort/api/laporan/$id';
 String apiDeleteLaporan(int id) => '$apiHost:$apiPort/api/laporan/$id';

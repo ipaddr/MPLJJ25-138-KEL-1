@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Laporan;
+use App\Models\Foto;
+use App\Models\TagFoto;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,19 +14,32 @@ class LaporanController extends Controller
     // Get All
     public function index()
     {
-        $laporan = Laporan::all();
+        $laporan = Laporan::with('user')->get(); // load relasi 'user'
         return response()->json($laporan);
     }
 
-   public function store(Request $request)
+    // GET detail laporan by ID
+    public function show($id)
+    {
+        $laporan = Laporan::with(['user', 'sekolah', 'fotos.tag', 'status'])
+            ->findOrFail($id);
+
+        return response()->json([
+            'message' => 'Detail laporan berhasil diambil.',
+            'data' => $laporan
+        ], 200);
+    }
+
+    // Store
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'judul_laporan' => 'required|string',
             'tanggal_pelaporan' => 'required|date',
             'isi_laporan' => 'required|string',
             'fk_id_sekolah' => 'required|exists:sekolah,id_sekolah',
-            'tag_foto' => 'array', // tag dikirim array
-            'tag_foto.*' => 'string|nullable', // setiap tag adalah string
+            'tag_foto' => 'array',
+            'tag_foto.*' => 'string|nullable',
         ]);
 
         $laporan = Laporan::create([
@@ -34,30 +50,29 @@ class LaporanController extends Controller
             'fk_id_sekolah' => $validated['fk_id_sekolah'],
         ]);
 
-        // Upload & relasi foto jika ada
         if ($request->hasFile('foto')) {
             foreach ($request->file('foto') as $index => $file) {
                 $path = $file->store('public/foto');
 
                 $tagName = $request->input("tag_foto.$index") ?? 'Tanpa Tag';
 
-                // Cek apakah tag sudah ada
-                $tag = \App\Models\TagFoto::firstOrCreate([
-                    'nama_tag' => $tagName,
-                ]);
+                // Cari atau buat Tag (bukan TagFoto!)
+                $tag = TagFoto::firstOrCreate(['nama_tag' => $tagName]);
 
-                $dataFoto = \App\Models\Foto::create([
+                // Simpan foto dengan relasi ke TagFoto
+                $foto = Foto::create([
                     'data_foto' => $path,
-                    'fk_id_tag_foto' => $tag->id_tag_foto,
+                    'fk_id_tag_foto' => $tag->id_tag_foto, // Gunakan id_tag_foto dari TagFoto
                 ]);
 
-                $laporan->fotos()->attach($dataFoto->id_foto);
+                // Hubungkan ke laporan
+                $laporan->fotos()->attach($foto->id_foto);
             }
         }
 
         return response()->json([
             'message' => 'Laporan berhasil dibuat.',
-            'data' => $laporan->load(['sekolah', 'fotos.tag']), // tampilkan juga tag-nya
+            'data' => $laporan->load(['sekolah', 'fotos.tag']),
         ], 201);
     }
 

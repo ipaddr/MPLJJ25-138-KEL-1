@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
 // Api routes for Laporan
 Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->group(function ()  {
     Route::get('/api/laporan', [LaporanController::class, 'index']);
+    Route::get('/api/laporan/{id}', [LaporanController::class, 'show']);
     Route::post('/api/laporan', [LaporanController::class, 'store']);
     Route::put('/api/laporan/{id}', [LaporanController::class, 'update']);
     Route::delete('/api/laporan/{id}', [LaporanController::class, 'destroy']);

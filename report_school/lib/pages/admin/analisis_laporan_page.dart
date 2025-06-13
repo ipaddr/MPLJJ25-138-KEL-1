@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import '../../models/laporan.dart';
 import '../../component/card_view/card_laporan_analisis.dart'; // ganti path sesuai strukturmu
@@ -12,12 +13,14 @@ class ListLaporanPageAnalisis extends StatefulWidget {
 class _ListLaporanPageAnalisisState extends State<ListLaporanPageAnalisis> {
   final List<Laporan> laporanList = [
     Laporan(
+      idLaporan: 1,
       judul: 'Laporan Kerusakan 1',
       namaPengirim: 'Andi',
       tanggal: DateTime(2025, 3, 23),
       rating: 4.0,
     ),
     Laporan(
+      idLaporan: 2,
       judul: 'Meja Tidak Cukup',
       namaPengirim: 'Budi',
       tanggal: DateTime(2025, 3, 24),
@@ -93,3 +96,4 @@ class _ListLaporanPageAnalisisState extends State<ListLaporanPageAnalisis> {
     );
   }
 }
+*/

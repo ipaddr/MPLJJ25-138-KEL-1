@@ -28,7 +28,10 @@ class DetailProgresPage extends StatelessWidget {
                     deskripsiProgres: "Proyek ini bertujuan untuk meningkatkan infrastruktur transportasi...",
                     persenProgress: 0.65,
                   ),
-                  const CardFilePendukung(),
+                  const CardFilePendukung(
+                    fotoPaths: [],
+                    tags: [],
+                  ),
                 ],
               ),
             ),

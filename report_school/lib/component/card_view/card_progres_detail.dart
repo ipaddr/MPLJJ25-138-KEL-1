@@ -30,7 +30,7 @@ class CardProgresDetail extends StatelessWidget {
           const SizedBox(height: 12),
           Column(
             children: laporanList
-                .map((laporan) => CardLaporan(laporan: laporan))
+                .map((laporan) => CardLaporanHome(laporan: laporan))
                 .toList(),
           ),
           const SizedBox(height: 24),

@@ -40,7 +40,7 @@ class _ListLaporanPageState extends State<ListLaporanPage> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: laporanList.length,
               itemBuilder: (context, index) {
-                return CardLaporan(laporan: laporanList[index]);
+                return CardLaporanHome(laporan: laporanList[index]);
               },
             ),
           ],

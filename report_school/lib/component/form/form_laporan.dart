@@ -9,6 +9,9 @@ import 'package:provider/provider.dart';
 import '../window/insert_gambar_window.dart';
 import '../../models/tag_foto.dart';
 import '../../component/window/konfirmasi_window.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 class LaporanFormCard extends StatefulWidget {
   final TextEditingController judulController;
@@ -35,6 +38,21 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
   final List<TagFoto> _selectedTags = [];
   bool isSubmitting = false;
   String? errorMessage;
+
+  Future<File> compressImage(File file) async {
+    final dir = await getTemporaryDirectory();
+    final targetPath = path.join(dir.path, '${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+    final XFile? result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      quality: 20, // Kualitas 20% untuk kompresi
+      format: CompressFormat.jpeg,
+    );
+
+    // Convert XFile to File jika tidak null
+    return result != null ? File(result.path) : file;
+  }
 
   Future<void> pickImagesWithWindow() async {
     await showDialog(
@@ -110,7 +128,9 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
       for (int i = 0; i < _selectedImages.length; i++) {
         final image = _selectedImages[i];
         final tag = _selectedTags[i];
-        request.files.add(await http.MultipartFile.fromPath('foto[]', image.path));
+        //request.files.add(await http.MultipartFile.fromPath('foto[]', image.path));
+        final compressed = await compressImage(image);
+        request.files.add(await http.MultipartFile.fromPath('foto[]', compressed.path));
         request.fields['tag_foto[$i]'] = tag.namaTag;
       }
 
@@ -134,6 +154,7 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
         setState(() => errorMessage = data['message'] ?? 'Gagal mengirim laporan.');
       }
     } catch (e) {
+      debugPrint('Error submitting form: $e');
       setState(() => errorMessage = 'Terjadi kesalahan koneksi.');
     }
 

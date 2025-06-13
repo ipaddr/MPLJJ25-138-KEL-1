@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../../models/laporan.dart';
 
 class CardDetailLaporan extends StatelessWidget {
-  const CardDetailLaporan({super.key});
+  final Laporan laporan;
+
+  const CardDetailLaporan({super.key, required this.laporan});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+    final tanggalFormatted =
+        DateFormat('EEEE, dd MMMM yyyy', 'id_ID').format(laporan.tanggal);
 
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -24,37 +30,38 @@ class CardDetailLaporan extends StatelessWidget {
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
+                    children: [
+                      const Text(
                         'Nama Pengirim',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFFFF9149),
                         ),
                       ),
-                      SizedBox(height: 4),
-                      Text('John'),
+                      const SizedBox(height: 4),
+                      Text(laporan.namaPengirim),
                     ],
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
+                    children: [
+                      const Text(
                         'Rating Pengguna',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFFFF9149),
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Row(
-                        children: [
-                          Icon(Icons.star, color: Colors.orange),
-                          Icon(Icons.star, color: Colors.orange),
-                          Icon(Icons.star, color: Colors.orange),
-                          Icon(Icons.star, color: Colors.orange),
-                          Icon(Icons.star_border, color: Colors.orange),
-                        ],
+                        children: List.generate(5, (i) {
+                          return Icon(
+                            i < laporan.rating.round()
+                                ? Icons.star
+                                : Icons.star_border,
+                            color: Colors.orange,
+                          );
+                        }),
                       ),
                     ],
                   ),
@@ -74,17 +81,17 @@ class CardDetailLaporan extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Judul Laporan',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFFFF9149),
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Nama Sekolah',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -94,23 +101,13 @@ class CardDetailLaporan extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Laporan 1'),
-                      Text('Sekolah A'),
+                      Text(laporan.judul),
+                      Text(laporan.namaSekolah),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Lokasi',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFFF9149),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text('Jln. contoh, rt 11, air tawar\nKabupaten Kota'),
                   const SizedBox(height: 12),
                   const Text(
                     'Tanggal Laporan',
@@ -120,7 +117,7 @@ class CardDetailLaporan extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text('Kamis 14 Oktober 2024'),
+                  Text(tanggalFormatted),
                 ],
               ),
             ),
@@ -131,35 +128,16 @@ class CardDetailLaporan extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     'Isi Laporan',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color(0xFFFF9149),
                     ),
                   ),
-                  SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'ini adalah contoh isi laporan ,'
-                              'ini adalah contoh isi laporan ,'
-                              'ini adalah contoh isi laporan ,'
-                              'ini adalah contoh isi laporan ,'
-                              'ini adalah contoh isi laporan ,',
-                              style: TextStyle(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  const SizedBox(height: 4),
+                  Text(laporan.isi),
                 ],
               ),
             ),
@@ -180,32 +158,20 @@ class CardDetailLaporan extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Container(
-                    padding: const EdgeInsets.fromLTRB(0, 6, 12, 6),
+                    padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
+                      color: Colors.red,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                                'Ditolak',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                          ),
-                        ],
-                      ),
+                    child: Text(
+                      laporan.status ?? 'Belum diverifikasi',
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 12),
         ],
       ),
     );

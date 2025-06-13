@@ -64,7 +64,9 @@ class _UploadDokumenWindowState extends State<UploadDokumenWindow> {
 
     if (result == true) {
       widget.onSubmit(_selectedImage!, _selectedTag!);
-      Navigator.pop(context); // Tutup window setelah submit
+      if (mounted) {
+        Navigator.pop(context); // Tutup window setelah submit
+      }
     }
   }
 

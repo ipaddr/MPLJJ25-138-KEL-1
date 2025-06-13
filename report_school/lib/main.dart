@@ -11,6 +11,7 @@ import 'providers/progres_provider.dart';
 import './controller/sekolah_controller.dart';
 import '../providers/file_pendukung_provider.dart';
 import 'controller/tag_foto_controller.dart';
+import 'providers/get_detail_laporan_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,9 +23,9 @@ void main() async {
         ChangeNotifierProvider(create: (_) => PengumumanProvider()),
         ChangeNotifierProvider(create: (_) => ProgressProvider()),
         ChangeNotifierProvider(create: (_) => TagFotoController()),
+        ChangeNotifierProvider(create: (_) => GetDetailLaporanProvider()),
         ChangeNotifierProvider(
           create: (_) => SekolahController(),
-          lazy: false, // Initialize SekolahController immediately
         ),
         ChangeNotifierProvider(create: (_) => FilePendukungProvider()),
       ],
