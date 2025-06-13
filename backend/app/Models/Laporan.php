@@ -13,6 +13,16 @@ class Laporan extends Model
     protected $guarded = [];
     public $timestamps = true;
 
+    protected $fillable = [
+        'judul_laporan',
+        'tanggal_pelaporan',
+        'isi_laporan',
+        'fk_id_user',
+        'fk_id_sekolah',
+        'fk_id_status_laporan',
+        'fk_id_progress',
+    ];
+
     public function status()
     {
         return $this->belongsTo(StatusLaporan::class, 'fk_id_status_laporan');

@@ -1,11 +1,14 @@
 import 'dart:io' show File;
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../models/file_pendukung.dart';
 import '../../providers/file_pendukung_provider.dart';
 import '../window/insert_gambar_window.dart';
+import '../../models/tag_foto.dart';
 
 class FormFilePendukung extends StatelessWidget {
   const FormFilePendukung({super.key});
@@ -37,7 +40,7 @@ class FormFilePendukung extends StatelessWidget {
                 ),
                 SizedBox(
                   width: itemWidth,
-                  child: _buildAddButton(context),
+                  child: _buildAddButton(context, provider),
                 ),
               ],
             ),
@@ -47,21 +50,32 @@ class FormFilePendukung extends StatelessWidget {
     );
   }
 
-  Widget _buildAddButton(BuildContext context) {
+  Widget _buildAddButton(BuildContext context, FilePendukungProvider provider) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(height: 8),
         ElevatedButton(
           onPressed: () {
-            // Buka Window duntuk memilih gambar
             showDialog(
               context: context,
-              barrierDismissible: true, // true = bisa ditutup dengan klik di luar
+              barrierDismissible: true,
               builder: (context) => Dialog(
                 backgroundColor: Colors.transparent,
                 insetPadding: const EdgeInsets.all(24),
-                child: const UploadDokumenWindow(),
+                child: UploadDokumenWindow(
+                  onSubmit: (File image, TagFoto tag) async {
+                    final bytes = await image.readAsBytes();
+
+                    provider.tambahGambar(
+                      FilePendukung(
+                        path: image.path,
+                        bytes: bytes,
+                        tag: tag,
+                      ),
+                    );
+                  },
+                ),
               ),
             );
           },
@@ -83,25 +97,19 @@ class _ImageItem extends StatelessWidget {
     Widget imageWidget;
 
     if (kIsWeb) {
-      // Untuk Web: gunakan data URI dari base64
-      final bytes = item.bytes;
-      final base64 = base64Encode(bytes);
+      final base64 = base64Encode(item.bytes);
       final uri = 'data:image/png;base64,$base64';
       imageWidget = Image.network(uri, width: 300, height: 400, fit: BoxFit.cover);
     } else {
-      // Untuk Android/iOS/desktop
       imageWidget = Image.file(File(item.path), width: 300, height: 400, fit: BoxFit.cover);
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ClipRRect(borderRadius: BorderRadius.circular(8), child: imageWidget),
         const SizedBox(height: 8),
-        ElevatedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue[800]),
-          child: const Text('Tag gambar', textAlign: TextAlign.center),
-        ),
+        Text('Tag: ${item.tag.namaTag}', style: const TextStyle(fontWeight: FontWeight.bold)),
       ],
     );
   }

@@ -1,14 +1,14 @@
 import 'dart:typed_data';
-enum FileTypePendukung { gambar}
+import 'tag_foto.dart';
 
 class FilePendukung {
   final String path;
-  final FileTypePendukung tipe;
-   final Uint8List bytes; 
+  final Uint8List bytes;
+  final TagFoto tag;
 
   FilePendukung({
     required this.path,
-    required this.tipe,
     required this.bytes,
+    required this.tag,
   });
 }

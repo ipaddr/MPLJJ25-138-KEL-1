@@ -35,3 +35,9 @@ const apiGetSekolah = '$apiHost:$apiPort/api/sekolah';
 const apiCreateSekolah = '$apiHost:$apiPort/api/sekolah';
 String apiUpdateSekolah(int id) => '$apiHost:$apiPort/api/sekolah/$id';
 String apiDeleteSekolah(int id) => '$apiHost:$apiPort/api/sekolah/$id';
+
+// Tag Foto routes
+const apiGetTagFoto = '$apiHost:$apiPort/api/tag-foto';
+const apiCreateTagFoto = '$apiHost:$apiPort/api/tag-foto';
+String apiUpdateTagFoto(int id) => '$apiHost:$apiPort/api/tag-foto/$id';
+String apiDeleteTagFoto(int id) => '$apiHost:$apiPort/api/tag-foto/$id';

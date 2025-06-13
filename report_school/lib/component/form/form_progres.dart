@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'form_file_pendukung.dart';
 
 class LaporanProgresCard extends StatelessWidget {
   final TextEditingController judulController;
@@ -127,7 +126,6 @@ class LaporanProgresCard extends StatelessWidget {
           'File Pendukung',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        FormFilePendukung(),
       ],
     );
   }

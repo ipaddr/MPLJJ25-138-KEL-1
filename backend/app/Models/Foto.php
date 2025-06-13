@@ -13,6 +13,11 @@ class Foto extends Model
     protected $guarded = [];
     public $timestamps = true;
 
+    protected $fillable = [
+        'data_foto',
+        'fk_id_tag_foto',
+    ];
+
     public function tag()
     {
         return $this->belongsTo(TagFoto::class, 'fk_id_tag_foto');

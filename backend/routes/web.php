@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\SekolahController;
+use App\Http\Controllers\TagFotoController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 Route::get('/', function () {
@@ -51,4 +52,13 @@ Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->gr
     Route::post('/api/sekolah', [SekolahController::class, 'store']);
     Route::put('/api/sekolah/{id}', [SekolahController::class, 'update']);
     Route::delete('/api/sekolah/{id}', [SekolahController::class, 'destroy']);
+});
+
+
+// Api untuk tag foto
+Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->group(function () {
+    Route::get('/api/tag-foto', [TagFotoController::class, 'index']);
+    Route::post('/api/tag-foto', [TagFotoController::class, 'store']);
+    Route::put('/api/tag-foto/{id}', [TagFotoController::class, 'update']);
+    Route::delete('/api/tag-foto/{id}', [TagFotoController::class, 'destroy']);
 });

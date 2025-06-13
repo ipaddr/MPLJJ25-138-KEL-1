@@ -19,7 +19,7 @@ class SekolahControllerTest extends TestCase
         return $user;
     }
 
-    public function test01_get_all_sekolah()
+    public function test01_sekolah()
     {
         $this->loginAs();
 
