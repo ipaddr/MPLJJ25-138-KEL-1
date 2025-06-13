@@ -3,13 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Progress extends Model
 {
+    use HasFactory;
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'progress';
     protected $primaryKey = 'id_progress';
     protected $guarded = [];
     public $timestamps = true;
+
+    protected $fillable = [
+        'nama_progress',
+        'isi_progress',
+        'persen_progress',
+        'tanggal_progress',
+        'fk_id_progress_sebelumnya',
+        'fk_id_user',
+    ];
 
     public function user()
     {
@@ -29,5 +45,10 @@ class Progress extends Model
     public function fotos()
     {
         return $this->belongsToMany(Foto::class, 'progress_foto', 'fk_id_progress', 'fk_id_foto');
+    }
+
+    public function laporan()
+    {
+        return $this->belongsToMany(Laporan::class, 'laporan_progress', 'fk_id_progress', 'fk_id_laporan');
     }
 }

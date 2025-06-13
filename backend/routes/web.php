@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\ProgressController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,4 +27,20 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/api/logout', [AuthController::class, 'logout']);
     Route::get('/api/get_user', [AuthController::class, 'me']);
+});
+
+// Api routes for Laporan
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/api/laporan', [LaporanController::class, 'index']);
+    Route::post('/api/laporan', [LaporanController::class, 'store']);
+    Route::put('/api/laporan/{id}', [LaporanController::class, 'update']);
+    Route::delete('/api/laporan/{id}', [LaporanController::class, 'destroy']);
+});
+
+// Api routes for Progress
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/api/progress', [ProgressController::class, 'index']);
+    Route::post('/api/progress', [ProgressController::class, 'store']);
+    Route::put('/api/progress/{id}', [ProgressController::class, 'update']);
+    Route::delete('/api/progress/{id}', [ProgressController::class, 'destroy']);
 });
