@@ -11,6 +11,7 @@ import '../../models/tag_foto.dart';
 import '../../component/window/konfirmasi_window.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 
 class LaporanFormCard extends StatefulWidget {

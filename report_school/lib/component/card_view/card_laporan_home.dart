@@ -4,6 +4,7 @@ import '../../models/laporan.dart';
 import '../../theme/app_theme.dart';
 import '../../pages/detail_laporan_page.dart';
 import '../elements/star_count.dart';
+import '../window/berikan_rating_laporan_window.dart';
 
 class CardLaporanHome extends StatelessWidget {
   final Laporan laporan;
@@ -102,7 +103,13 @@ class CardLaporanHome extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    // TODO: Tambahkan dialog atau navigasi ke halaman rating
+                    showDialog(
+                      context: context,
+                      builder: (_) => Dialog(
+                        backgroundColor: Colors.transparent,
+                        child: BerikanRatingLaporanWindow(laporan: laporan),
+                      ),
+                    );
                   },
                   child: const Text(
                     'Berikan Rating',

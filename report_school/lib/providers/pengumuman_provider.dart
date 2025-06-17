@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/pengumuman.dart';
-import '../models/foto.dart';
+import '../models/foto_path.dart';
 
 class PengumumanProvider with ChangeNotifier {
   // List untuk menyimpan pengumuman
@@ -12,16 +12,17 @@ class PengumumanProvider with ChangeNotifier {
   // Menambahkan data dummy
   void addDummyPengumuman() {
     _pengumumanList = [
-      Pengumuman(
-        judul: 'Pengumuman Penting 1',
-        deskripsi: 'Deskripsi pengumuman pertama, yang berisi informasi penting.',
-        tanggal: DateTime.now(),
-        foto: Foto(
-          url: 'assets/dataDummy/pengumuman_dummy.jpg',
-          caption: 'Foto pengumuman 1',
-        ),
+    Pengumuman(
+      judul: 'Pengumuman Penting 1',
+      deskripsi: 'Deskripsi pengumuman pertama, yang berisi informasi penting.',
+      tanggal: DateTime.now(),
+      foto: FotoPath(
+        AssetImage("assets/dataDummy/pengumuman_dummy.jpg"),
+        caption: 'Foto pengumuman 1',
       ),
-    ];
+    ),
+];
+
     notifyListeners(); // Memberi tahu bahwa data telah diperbarui
   }
 }

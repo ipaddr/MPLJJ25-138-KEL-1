@@ -17,6 +17,7 @@ const apiResendCodeResetPw = '$apiHost:$apiPort/api/resend_verification_code_pw'
 // Auth routes (authenticated user only)
 const apiLogout = '$apiHost:$apiPort/api/logout';
 const apiGetUser = '$apiHost:$apiPort/api/get_user';
+const apiIsAdmin = '$apiHost:$apiPort/api/is_admin';
 
 // Laporan routes
 const apiGetLaporan = '$apiHost:$apiPort/api/laporan';
@@ -24,6 +25,9 @@ const apiGetDetailLaporan = '$apiHost:$apiPort/api/laporan/{id}';
 const apiCreateLaporan = '$apiHost:$apiPort/api/laporan';
 String apiUpdateLaporan(int id) => '$apiHost:$apiPort/api/laporan/$id';
 String apiDeleteLaporan(int id) => '$apiHost:$apiPort/api/laporan/$id';
+const apiGetLaporanHariIni = '$apiHost:$apiPort/api/laporan/hari_ini';
+// Route untuk memberikan rating pada laporan berdasarkan id laporan
+String apiRateLaporan(int id) => '$apiHost:$apiPort/api/laporan/$id/rating';
 
 // Progress routes
 const apiGetProgress = '$apiHost:$apiPort/api/progress';

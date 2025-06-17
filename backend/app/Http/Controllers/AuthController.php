@@ -16,6 +16,21 @@ use Carbon\Carbon;
 
 class AuthController extends Controller
 {
+    // Fungsi untuk cek apakah user Admin atau User
+    public function isAdmin()
+    {
+        // Cek apakah user sudah login
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        // Cek apakah user adalah admin
+        if ($user && $user->role === 'admin') {
+            return response()->json(['is_admin' => true]);
+        }
+        return response()->json(['is_admin' => false]);
+    }
+
     // Register user + kirim email verifikasi
     public function register(Request $request)
     {

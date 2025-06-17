@@ -79,10 +79,12 @@ class _UploadDokumenWindowState extends State<UploadDokumenWindow> {
     if (success) {
       newTagController.clear();
       await tagController.fetchTags(); // refresh list tag
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Tag berhasil ditambahkan.")),
       );
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Gagal menambahkan tag (kemungkinan sudah ada).")),
       );

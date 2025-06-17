@@ -50,17 +50,16 @@ class CardPengumuman extends StatelessWidget {
             const SizedBox(height: 12),
 
             // Baris 4: Foto
-            if (pengumuman.foto.url.isNotEmpty) 
-              SizedBox(
-                width: 150,
-                child: AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Image.network(
-                    pengumuman.foto.url,
-                    fit: BoxFit.contain, // Tidak memotong gambar
-                  ),
+            SizedBox(
+              width: 150,
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Image(
+                  image: pengumuman.foto.image,
+                  fit: BoxFit.contain, // Tidak memotong gambar
                 ),
               ),
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
             ),

@@ -10,6 +10,8 @@ class Laporan {
   final List<String> fotoUrls;
   final List<String> tags;
 
+  static const String pathUrl = 'http://192.168.130.167:8000/storage/';
+
   Laporan({
     required this.id,
     required this.judul,
@@ -24,14 +26,15 @@ class Laporan {
   });
 
   factory Laporan.fromJson(Map<String, dynamic> json) {
-
     return Laporan(
       id: json['id_laporan'],
       judul: json['judul_laporan'] ?? '',
       isi: json['isi_laporan'] ?? '',
       tanggal: DateTime.tryParse(json['tanggal_pelaporan'] ?? '') ?? DateTime.now(),
       namaPengirim: json['user']?['username'] ?? 'Anonim',
-      rating: (json['user']?['rating'] ?? 0).toDouble(),
+      rating: (json['user'] != null && json['user']['rating'] != null)
+        ? (json['user']['rating'] as num).toDouble()
+        : 0.0,
       namaSekolah: json['sekolah']?['nama_sekolah'] ?? 'Tidak diketahui',
       status: json['status']?['nama_status'] ?? 'Belum diverifikasi',
       
@@ -41,7 +44,7 @@ class Laporan {
               if (path is String && path.isNotEmpty) {
                 return path.startsWith('http')
                   ? path
-                  : 'http://192.168.130.167:8000/storage/' + path.replaceFirst('public/', '');
+                  : Laporan.pathUrl + path.replaceFirst('public/', '');
               }
               return ''; // fallback
             }).toList(),
@@ -51,6 +54,10 @@ class Laporan {
             .toList(),
 
     );
+  }
+
+  void updateRating(double newRating) {
+    rating = newRating;
   }
 
 }

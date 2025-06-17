@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Laporan;
 use App\Models\Foto;
 use App\Models\TagFoto;
-
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use App\Models\Rating;
 
 class LaporanController extends Controller
 {
@@ -21,13 +23,36 @@ class LaporanController extends Controller
     // GET detail laporan by ID
     public function show($id)
     {
-        $laporan = Laporan::with(['user', 'sekolah', 'fotos.tag', 'status'])
-            ->findOrFail($id);
+        $laporan = Laporan::with(['user', 'sekolah', 'fotos.tag'])
+                    ->findOrFail($id);
+
+        // Hitung rata-rata rating dari tabel ratings
+        $rating = Rating::where('fk_id_laporan', $id)->avg('nilai_rating');
 
         return response()->json([
             'message' => 'Detail laporan berhasil diambil.',
-            'data' => $laporan
-        ], 200);
+            'data' => $laporan,
+            'rating' => $rating ?? 0,
+        ]);
+    }
+
+
+    // GET laporan hari ini
+    public function laporanHariIni()
+    {
+        try {
+            $hariIni = Carbon::now('Asia/Jakarta')->toDateString(); // WIB
+            Log::info("Mengambil laporan untuk tanggal: $hariIni (WIB)");
+
+            $laporan = Laporan::with(['user'])
+                ->whereDate('tanggal_pelaporan', $hariIni)
+                ->get();
+
+            return response()->json($laporan);
+        } catch (\Exception $e) {
+            Log::error("Gagal ambil laporan hari ini: " . $e->getMessage());
+            return response()->json([], 200);
+        }
     }
 
     // Store
@@ -113,4 +138,29 @@ class LaporanController extends Controller
 
         return response()->json(['message' => 'Laporan berhasil dihapus.']);
     }
+
+    // Rate laporan
+   public function rate(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'rating' => 'required|numeric|min:1|max:5',
+        ]);
+
+        $laporan = Laporan::findOrFail($id);
+
+        // Pastikan hanya ada satu rating per user per laporan
+        $existingRating = $laporan->rating()->where('fk_id_user', Auth::id())->first();
+
+        if ($existingRating) {
+            $existingRating->update(['nilai_rating' => $validated['rating']]);
+        } else {
+            $laporan->rating()->create([
+                'fk_id_user' => Auth::id(),
+                'nilai_rating' => $validated['rating'],
+            ]);
+        }
+
+        return response()->json(['message' => 'Rating berhasil disimpan.']);
+    }
+
 }

@@ -1,42 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 import '../../models/file_pendukung.dart';
-import '../../models/tag_foto.dart';
 
 class FilePendukungProvider with ChangeNotifier {
   final List<FilePendukung> _files = [];
 
   List<FilePendukung> get gambarList => _files;
 
-  /// Tambahkan file dari FilePicker (jika kamu ingin pakai FilePicker manual)
-  Future<void> tambahGambarDariGaleri({TagFoto? tagOverride}) async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-        allowMultiple: false,
-      );
+  static const String serverIp = "192.168.130.167"; // ganti sesuai IP
+  static const String port = "8000";
 
-      if (result != null && result.files.isNotEmpty) {
-        final file = result.files.first;
-
-        _files.add(
-          FilePendukung(
-            path: file.path ?? '',
-            bytes: file.bytes ?? Uint8List(0),
-            tag: tagOverride ?? TagFoto(
-              id: 0,
-              namaTag: "Default Tag"),
-          ),
-        );
-        notifyListeners();
-      }
-    } catch (e) {
-      debugPrint("Gagal memilih gambar: $e");
-    }
+  String buildImageUrl(String path) {
+    if (path.startsWith("http")) return path;
+    final cleanedPath = path.replaceFirst("public/", "");
+    return "http://$serverIp:$port/storage/$cleanedPath";
   }
 
-  /// Dipakai saat submit dari `UploadDokumenWindow`
+  Future<bool> checkImageExists(String url) async {
+    for (int attempt = 1; attempt <= 10; attempt++) {
+      try {
+        final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
+        if (response.statusCode == 200) {
+          return true;
+        } else {
+          debugPrint("Percobaan $attempt gagal: Status ${response.statusCode}");
+        }
+      } catch (e) {
+        debugPrint("Percobaan $attempt error: $e");
+      }
+      await Future.delayed(const Duration(seconds: 2));
+    }
+    return false;
+  }
+
   void addFile(FilePendukung file) {
     _files.add(file);
     notifyListeners();
@@ -46,7 +42,7 @@ class FilePendukungProvider with ChangeNotifier {
     _files.add(file);
     notifyListeners();
   }
-  
+
   void removeAt(int index) {
     if (index >= 0 && index < _files.length) {
       _files.removeAt(index);

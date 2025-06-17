@@ -8,9 +8,12 @@ import '../config/api.dart';
 
 class HomeProvider with ChangeNotifier {
   final List<Laporan> _laporanList = [];
+  bool _isAdmin = false;
 
   List<Laporan> get laporanList => _laporanList;
+  bool get isAdmin => _isAdmin;
 
+  // Fungsi Ambil semua laporan
   Future<void> fetchLaporan() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -40,8 +43,95 @@ class HomeProvider with ChangeNotifier {
     }
   }
 
-  void updateRating(Laporan laporan, double newRating) {
-    laporan.rating = newRating;
+  // Fungsi Ambil laporan hari ini
+  Future<void> fetchLaporanHariIni() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      final response = await http.get(
+        Uri.parse(apiGetLaporanHariIni),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('Berhasil mengambil laporan hari ini: ${response.body}');
+        final List jsonData = jsonDecode(response.body);
+
+        _laporanList.clear();
+        _laporanList.addAll(jsonData.map((item) => Laporan.fromJson(item)));
+        notifyListeners();
+      } else {
+        debugPrint('Gagal mengambil laporan hari ini: ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error saat fetch laporan hari ini: $e');
+    }
+  }
+
+  // Fungsi untuk cek apakah Admin atau user
+  // Cek Admin
+  Future<void> checkIsAdmin() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      final response = await http.get(
+        Uri.parse(apiIsAdmin),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        _isAdmin = jsonData['is_admin'] ?? false;
+        debugPrint('Cek admin berhasil: $_isAdmin');
+      } else {
+        debugPrint('Gagal mengecek admin: ${response.body}');
+        _isAdmin = false;
+      }
+    } catch (e) {
+      debugPrint('Error saat cek admin: $e');
+      _isAdmin = false;
+    }
+
     notifyListeners();
+  }
+
+ Future<void> rateLaporan(Laporan laporan, double rating) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      final postResponse = await http.post(
+        Uri.parse(apiRateLaporan(laporan.id)),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'rating': rating}),
+      );
+
+      debugPrint('Response POST rating: ${postResponse.statusCode}');
+      debugPrint('Body POST: ${postResponse.body}');
+
+      if (postResponse.statusCode == 200) {
+        laporan.updateRating(rating); // cukup update objek lokalnya
+        notifyListeners(); // biar UI ke-refresh
+      } else {
+        debugPrint('Gagal memberikan rating: ${postResponse.body}');
+      }
+    } catch (e, stackTrace) {
+      debugPrint('Error saat memberikan rating: $e');
+      debugPrint('StackTrace: $stackTrace');
+    }
   }
 }
