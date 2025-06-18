@@ -1,18 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:report_school/config/api.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-import 'package:report_school/controller/sekolah_controller.dart';
 import 'package:provider/provider.dart';
-import '../window/insert_gambar_window.dart';
-import '../../models/tag_foto.dart';
-import '../../component/window/konfirmasi_window.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:path_provider/path_provider.dart';
-// ignore: depend_on_referenced_packages
-import 'package:path/path.dart' as path;
+import 'package:report_school/controller/sekolah_controller.dart';
+import 'package:report_school/models/tag_foto.dart';
+import 'package:report_school/component/window/konfirmasi_window.dart';
+import 'package:report_school/component/window/insert_gambar_window.dart';
+import 'package:report_school/providers/laporan_provider.dart';
+import 'package:report_school/utils/dialog_helper.dart';
 
 class LaporanFormCard extends StatefulWidget {
   final TextEditingController judulController;
@@ -39,21 +33,6 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
   final List<TagFoto> _selectedTags = [];
   bool isSubmitting = false;
   String? errorMessage;
-
-  Future<File> compressImage(File file) async {
-    final dir = await getTemporaryDirectory();
-    final targetPath = path.join(dir.path, '${DateTime.now().millisecondsSinceEpoch}.jpg');
-
-    final XFile? result = await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path,
-      targetPath,
-      quality: 20, // Kualitas 20% untuk kompresi
-      format: CompressFormat.jpeg,
-    );
-
-    // Convert XFile to File jika tidak null
-    return result != null ? File(result.path) : file;
-  }
 
   Future<void> pickImagesWithWindow() async {
     await showDialog(
@@ -94,69 +73,55 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
   }
 
   Future<void> submitForm() async {
-    if (widget.judulController.text.isEmpty ||
-        widget.isiController.text.isEmpty ||
-        widget.selectedSekolah == null) {
-      setState(() => errorMessage = 'Semua field wajib diisi.');
-      return;
-    }
+    final sekolahCtrl = Provider.of<SekolahController>(context, listen: false);
+    final laporanProvider = Provider.of<LaporanProvider>(context, listen: false);
+    final selectedId = sekolahCtrl.getSelectedSekolahId();
 
     setState(() {
       isSubmitting = true;
       errorMessage = null;
     });
 
-    final sekolahCtrl = Provider.of<SekolahController>(context, listen: false);
-    final selectedId = sekolahCtrl.getSelectedSekolahId();
-    if (selectedId == null) {
-      setState(() => errorMessage = 'Sekolah tidak valid.');
-      return;
-    }
+    final result = await laporanProvider.kirimLaporan(
+      judul: widget.judulController.text,
+      isi: widget.isiController.text,
+      idSekolah: selectedId,
+      images: _selectedImages,
+      tags: _selectedTags,
+    );
 
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
+    if (result.success) {
+      widget.judulController.clear();
+      sekolahCtrl.updateSelectedSekolah(null); // Reset pilihan sekolah
+      widget.isiController.clear();
+      setState(() {
+        _selectedImages.clear();
+        _selectedTags.clear();
+      });
+      // Window untuk konfirmasi pengiriman laporan
+      await Future.delayed(const Duration(milliseconds: 100));
+      // Tampilkan dialog konfirmasi
+      
+      showDialog(
+        // ignore: use_build_context_synchronously
+        context: context,
+        builder: (_) => Dialog(
+          backgroundColor: Colors.transparent,
+          child: SystemMessageCard(
+            message: 'Laporan berhasil dikirim.',
+            yesText: 'OK',
+          ),
+        ),
+      );
 
-      final uri = Uri.parse(apiCreateLaporan);
-      final request = http.MultipartRequest('POST', uri);
-      request.headers['Authorization'] = 'Bearer $token';
-
-      request.fields['judul_laporan'] = widget.judulController.text;
-      request.fields['isi_laporan'] = widget.isiController.text;
-      request.fields['fk_id_sekolah'] = selectedId.toString();
-      request.fields['tanggal_pelaporan'] = DateTime.now().toIso8601String();
-
-      for (int i = 0; i < _selectedImages.length; i++) {
-        final image = _selectedImages[i];
-        final tag = _selectedTags[i];
-        //request.files.add(await http.MultipartFile.fromPath('foto[]', image.path));
-        final compressed = await compressImage(image);
-        request.files.add(await http.MultipartFile.fromPath('foto[]', compressed.path));
-        request.fields['tag_foto[$i]'] = tag.namaTag;
-      }
-
-      final response = await request.send();
-
-      if (response.statusCode == 201) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Laporan berhasil dikirim.')),
-          );
-        }
-        widget.judulController.clear();
-        widget.isiController.clear();
-        setState(() {
-          _selectedImages.clear();
-          _selectedTags.clear();
-        });
-      } else {
-        final body = await response.stream.bytesToString();
-        final data = jsonDecode(body);
-        setState(() => errorMessage = data['message'] ?? 'Gagal mengirim laporan.');
-      }
-    } catch (e) {
-      debugPrint('Error submitting form: $e');
-      setState(() => errorMessage = 'Terjadi kesalahan koneksi.');
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Laporan berhasil dikirim.')),
+      );
+    } else {
+      setState(() {
+        errorMessage = result.message;
+      });
     }
 
     setState(() => isSubmitting = false);
@@ -164,15 +129,21 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
 
   @override
   Widget build(BuildContext context) {
+    if (errorMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        DialogHelper.showErrorDialog(
+          context: context,
+          message: errorMessage!,
+          onClose: () => setState(() => errorMessage = null),
+        );
+      });
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const Text('Informasi Umum', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         const SizedBox(height: 10),
-
-        if (errorMessage != null)
-          Text(errorMessage!, style: const TextStyle(color: Colors.red)),
-
         Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 4,
@@ -190,9 +161,13 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
+                  
                   value: widget.selectedSekolah,
                   items: widget.daftarSekolah.map((sekolah) {
-                    return DropdownMenuItem(value: sekolah, child: Text(sekolah));
+                    return DropdownMenuItem(
+                      value: sekolah, // pakai nama langsung
+                      child: Text(sekolah),
+                    );
                   }).toList(),
                   onChanged: widget.onSekolahChanged,
                   decoration: const InputDecoration(
@@ -204,9 +179,7 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
             ),
           ),
         ),
-
         const SizedBox(height: 16),
-
         Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 4,
@@ -222,18 +195,15 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
             ),
           ),
         ),
-
-        const SizedBox(height: 10),
+        const SizedBox(height: 16),
         const Text('File Pendukung', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-
+        const SizedBox(height: 10),
         ElevatedButton.icon(
           onPressed: pickImagesWithWindow,
           icon: const Icon(Icons.image),
           label: const Text('Pilih Gambar'),
         ),
-
         const SizedBox(height: 10),
-
         if (_selectedImages.isNotEmpty)
           Wrap(
             spacing: 8,
@@ -275,9 +245,7 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
               );
             }),
           ),
-
         const SizedBox(height: 16),
-
         SizedBox(
           width: double.infinity,
           height: 45,

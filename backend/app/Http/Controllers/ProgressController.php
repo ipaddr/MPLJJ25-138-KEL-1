@@ -5,6 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Progress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\TagFoto;
+use App\Models\Foto;
+use App\Models\Laporan;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+
+use function Laravel\Prompts\progress;
 
 class ProgressController extends Controller
 {
@@ -17,40 +24,56 @@ class ProgressController extends Controller
 
     // Tambah progress baru
     public function store(Request $request)
-        {
-            $validated = $request->validate([
+    {   
+        $validated = $request->validate([
             'nama_progress' => 'required|string',
             'isi_progress' => 'required|string',
             'persen_progress' => 'required|numeric|min:0|max:100',
             'fk_id_progress_sebelumnya' => 'nullable|exists:progress,id_progress',
-            'daftar_laporan' => 'array',
-            'daftar_laporan.*' => 'exists:laporan,id_laporan'
+            'fk_id_laporan' => 'required|exists:laporan,id_laporan',
         ]);
 
         $progress = Progress::create([
             'nama_progress' => $validated['nama_progress'],
             'isi_progress' => $validated['isi_progress'],
             'persen_progress' => $validated['persen_progress'],
-            'tanggal_progress' => now(), // Atur tanggal progress ke waktu sekarang
+            'tanggal_progress' => now(),
             'fk_id_progress_sebelumnya' => $validated['fk_id_progress_sebelumnya'] ?? null,
             'fk_id_user' => Auth::id(),
         ]);
 
-        // Hubungkan dengan laporan
-        if (!empty($validated['daftar_laporan'])) {
-            $progress->laporan()->sync($validated['daftar_laporan']);
-        }
+        // Hubungkan progress ke laporan
+        Laporan::where('id_laporan', $validated['fk_id_laporan'])
+            ->update(['fk_id_progress' => $progress->id_progress]);
 
-        // Hubungkan dengan foto jika ada
-        if ($request->has('daftar_foto')) {
-            $progress->fotos()->sync($request->input('daftar_foto'));
+        // Upload dan hubungkan foto jika ada
+        if ($request->hasFile('fotos')) {
+            foreach ($request->file('fotos') as $index => $file) {
+                $path = $file->store('public/foto');
+
+                // Ambil nama tag sesuai index
+                $tagName = $request->input("tags.$index") ?? 'Tanpa Tag';
+
+                // Cari atau buat tag
+                $tag = TagFoto::firstOrCreate(['nama_tag' => $tagName]);
+
+                // Simpan foto
+                $foto = Foto::create([
+                    'data_foto' => $path,
+                    'fk_id_tag_foto' => $tag->id_tag_foto,
+                ]);
+
+                // Hubungkan foto dengan progress (bukan laporan)
+                $progress->fotos()->attach($foto->id_foto);
+            }
         }
 
         return response()->json([
             'message' => 'Progress berhasil dibuat.',
-            'data' => $progress
+            'data' => $progress->load(['user', 'fotos.tag']),
         ], 201);
     }
+
 
     // Update progress (admin only)
     public function update(Request $request, $id)
@@ -59,6 +82,12 @@ class ProgressController extends Controller
         if ($user->role !== 'admin') {
             return response()->json(['message' => 'Hanya admin yang dapat mengubah progress.'], 403);
         }
+
+        Log::info('Update progress request', [
+            'user_id' => $user->id,
+            'progress_id' => $id,
+            'request_data' => $request->all()
+        ]);
 
         $progress = Progress::findOrFail($id);
 

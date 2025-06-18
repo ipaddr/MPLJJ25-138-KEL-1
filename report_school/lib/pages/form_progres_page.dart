@@ -32,7 +32,7 @@ class _ListLaporanPageState extends State<FormProgresPage> {
                   isiController: sekolahCtrl.isiController,
                   selectedSekolah: sekolahCtrl.selectedNamaSekolah,
                   daftarSekolah: sekolahCtrl.daftarNamaSekolah,
-                  onSekolahChanged: sekolahCtrl.updateSelectedSekolah,
+                  onLaporanChanged: sekolahCtrl.updateSelectedSekolah,
                 ),
               ],
             ),

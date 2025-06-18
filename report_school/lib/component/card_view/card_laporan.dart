@@ -6,10 +6,10 @@ import '../../pages/detail_laporan_page.dart';
 import '../elements/star_count.dart';
 import '../window/berikan_rating_laporan_window.dart';
 
-class CardLaporanHome extends StatelessWidget {
+class CardLaporan extends StatelessWidget {
   final Laporan laporan;
 
-  const CardLaporanHome({super.key, required this.laporan});
+  const CardLaporan({super.key, required this.laporan});
 
   @override
   Widget build(BuildContext context) {

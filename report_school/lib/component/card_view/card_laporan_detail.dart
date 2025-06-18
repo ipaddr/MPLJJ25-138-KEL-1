@@ -42,8 +42,8 @@ class CardDetailLaporan extends StatelessWidget {
                       Text(laporan.namaPengirim),
                     ],
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                 Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text(
                         'Rating Pengguna',
@@ -54,14 +54,27 @@ class CardDetailLaporan extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Row(
-                        children: List.generate(5, (i) {
-                          return Icon(
-                            i < laporan.rating.round()
-                                ? Icons.star
-                                : Icons.star_border,
-                            color: Colors.orange,
-                          );
-                        }),
+                        children: [
+                          Row(
+                            children: List.generate(5, (i) {
+                              return Icon(
+                                i < (laporan.user.rating ?? 0).round()
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: Colors.orange,
+                                size: 20,
+                              );
+                            }),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '(${(laporan.user.rating ?? 0).toStringAsFixed(1)})', // Display rating with one decimal place
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFFF9149),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

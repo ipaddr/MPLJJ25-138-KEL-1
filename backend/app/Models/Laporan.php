@@ -58,6 +58,20 @@ class Laporan extends Model
         return $this->hasMany(Rating::class, 'fk_id_laporan');
     }
 
+    // Fungsi untuk mengambil rating rata rata dari laporan
+    public function getRataRataRatingAttribute()
+    {
+        $jumlahRating = $this->rating()->sum('nilai_rating');
+        $totalUser = $this->rating()->count();
+
+        if ($totalUser === 0) {
+            return null; // Atau bisa juga 0
+        }
+
+        return round($jumlahRating / $totalUser, 2); // dibulatkan 2 angka di belakang koma
+    }
+
+
     public function analisis()
     {
         return $this->hasOne(Analisis::class, 'fk_id_laporan');

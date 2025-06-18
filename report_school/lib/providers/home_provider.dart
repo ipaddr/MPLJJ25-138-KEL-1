@@ -8,9 +8,13 @@ import '../config/api.dart';
 
 class HomeProvider with ChangeNotifier {
   final List<Laporan> _laporanList = [];
+  final List<Laporan> _laporanHariIniList = [];
+  final List<Laporan> _laporanListDiterima = [];
   bool _isAdmin = false;
 
   List<Laporan> get laporanList => _laporanList;
+  List<Laporan> get laporanHariIniList => _laporanHariIniList;
+  List<Laporan> get laporanListDiterima => _laporanListDiterima;
   bool get isAdmin => _isAdmin;
 
   // Fungsi Ambil semua laporan
@@ -30,10 +34,11 @@ class HomeProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         debugPrint('Berhasil mengambil laporan: ${response.body}');
-        final List jsonData = jsonDecode(response.body);
-
+        final Map<String, dynamic> decoded = jsonDecode(response.body);
+        final List<dynamic> jsonData = decoded['data'];
+       
         _laporanList.clear();
-        _laporanList.addAll(jsonData.map((item) => Laporan.fromJson(item)));
+        _laporanList.addAll(jsonData.map((item) => Laporan.fromJson(item)).toList());
         notifyListeners();
       } else {
         debugPrint('Gagal mengambil laporan: ${response.body}');
@@ -60,16 +65,50 @@ class HomeProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         debugPrint('Berhasil mengambil laporan hari ini: ${response.body}');
-        final List jsonData = jsonDecode(response.body);
+        final Map<String, dynamic> decoded = jsonDecode(response.body);
+        final List<dynamic> jsonData = decoded['data'];
+        debugPrint('decoded["data"] runtimeType: ${decoded["data"].runtimeType}');
 
-        _laporanList.clear();
-        _laporanList.addAll(jsonData.map((item) => Laporan.fromJson(item)));
+        _laporanHariIniList.clear();
+        _laporanHariIniList.addAll(jsonData.map((item) => Laporan.fromJson(item)).toList());
         notifyListeners();
       } else {
         debugPrint('Gagal mengambil laporan hari ini: ${response.body}');
       }
     } catch (e) {
       debugPrint('Error saat fetch laporan hari ini: $e');
+    }
+  }
+
+  // Fungsi Ambil Laporan diterima
+  Future<void> fetchLaporanDiterima() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      final response = await http.get(
+        Uri.parse(apiGetLaporanDiterima),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('Berhasil mengambil laporan diterima: ${response.body}');
+        final Map<String, dynamic> decoded = jsonDecode(response.body);
+        final List<dynamic> jsonData = decoded['data'];
+        debugPrint('decoded["data"] runtimeType: ${decoded["data"].runtimeType}');
+        
+        _laporanListDiterima.clear();
+        _laporanListDiterima.addAll(jsonData.map((item) => Laporan.fromJson(item)).toList());
+        notifyListeners();
+      } else {
+        debugPrint('Gagal mengambil laporan yang diterima: ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error saat fetch laporan yang diterima: $e');
     }
   }
 
@@ -134,4 +173,6 @@ class HomeProvider with ChangeNotifier {
       debugPrint('StackTrace: $stackTrace');
     }
   }
+
+  // Fungsi untuk mengam
 }

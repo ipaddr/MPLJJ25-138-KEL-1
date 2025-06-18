@@ -22,9 +22,11 @@ class _HomePageState extends State<HomePage> {
 
     // Fetch laporan dan pengumuman saat pertama kali dibuka
     Future.microtask(() {
-      if (!mounted) return;
+      // ignore: use_build_context_synchronously
       final laporanProvider = Provider.of<HomeProvider>(context, listen: false);
+      // ignore: use_build_context_synchronously
       final pengumumanProvider = Provider.of<PengumumanProvider>(context, listen: false);
+      // ignore: use_build_context_synchronously
       final checkAdmin = Provider.of<HomeProvider>(context, listen: false);
 
       laporanProvider.fetchLaporanHariIni();
@@ -35,13 +37,13 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _refreshData() async {
     await context.read<HomeProvider>().fetchLaporanHariIni();
-    if (!mounted) return; // Ensure widget is still mounted
+    // ignore: use_build_context_synchronously
     await context.read<HomeProvider>().checkIsAdmin();
   }
 
   @override
   Widget build(BuildContext context) {
-    final laporanList = context.watch<HomeProvider>().laporanList;
+    final laporanListHariIni = context.watch<HomeProvider>().laporanHariIniList;
     final pengumumanList = context.watch<PengumumanProvider>().pengumumanList;
 
     return Scaffold(
@@ -93,12 +95,16 @@ class _HomePageState extends State<HomePage> {
                     color: Theme.of(context).colorScheme.onSurface,
                     margin: const EdgeInsets.symmetric(vertical: 8),
                   ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: laporanList.length,
-                    itemBuilder: (context, index) {
-                      return CardLaporanHome(laporan: laporanList[index]);
+                 Consumer<HomeProvider>(
+                    builder: (context, provider, _) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: laporanListHariIni.length,
+                        itemBuilder: (context, index) {
+                          return CardLaporanHome(laporan: laporanListHariIni[index]);
+                        },
+                      );
                     },
                   ),
                 ],
@@ -119,7 +125,6 @@ class _HomePageState extends State<HomePage> {
                     context,
                     MaterialPageRoute(builder: (context) => const FormLaporanPage()),
                   ).then((_) {
-                    if (!mounted) return;
                     // ignore: use_build_context_synchronously
                     context.read<HomeProvider>().fetchLaporanHariIni();
                   });
@@ -160,7 +165,7 @@ class _HomePageState extends State<HomePage> {
           if (context.watch<HomeProvider>().isAdmin) ...[
             // --- FAB Progres ---
             Positioned(
-              bottom: 16 + 70,
+              bottom: 16, // + 70 jika mau di atas FAB Tambah
               right: 16,
               child: FloatingActionButton(
                 heroTag: "fabTambahProgres",
@@ -169,7 +174,6 @@ class _HomePageState extends State<HomePage> {
                     context,
                     MaterialPageRoute(builder: (context) => const FormProgresPage()),
                   ).then((_) {
-                    if (!mounted) return;
                     // ignore: use_build_context_synchronously
                     context.read<HomeProvider>().fetchLaporanHariIni();
                   });

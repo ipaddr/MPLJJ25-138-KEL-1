@@ -146,7 +146,7 @@ class _FormRegisterState extends State<FormRegister> {
       final data = jsonDecode(res.body);
 
       if (res.statusCode == 200) {
-        if (!mounted) return;
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage()));
       } else {
         setState(() => errorMessage = data['message'] ?? 'Kode salah atau kadaluarsa.');

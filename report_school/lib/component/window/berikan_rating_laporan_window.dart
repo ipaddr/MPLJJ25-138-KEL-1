@@ -24,7 +24,7 @@ class BerikanRatingLaporanWindow extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            "Berikan Rating Pengguna",
+            "Berikan Rating laporan",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 16),

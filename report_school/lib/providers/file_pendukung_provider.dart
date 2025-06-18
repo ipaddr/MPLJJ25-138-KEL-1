@@ -7,7 +7,7 @@ class FilePendukungProvider with ChangeNotifier {
 
   List<FilePendukung> get gambarList => _files;
 
-  static const String serverIp = "192.168.130.167"; // ganti sesuai IP
+  static const String serverIp = "192.168.108.167"; // ganti sesuai IP
   static const String port = "8000";
 
   String buildImageUrl(String path) {

@@ -48,9 +48,6 @@ class _FormLoginState extends State<FormLogin> {
       return;
     }
 
-    // Kirim permintaan login ke API
-    if (!mounted) return; // Cek apakah widget masih ada di tree
-
     // Apakah email valid?
     final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
     if (!emailRegex.hasMatch(emailController.text.trim())) {
@@ -88,9 +85,9 @@ class _FormLoginState extends State<FormLogin> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', data['token']);
       
-      if (!mounted) return; // Cek apakah widget masih ada di tree
-
+      
       Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(builder: (context) => const NavApp()),
       );

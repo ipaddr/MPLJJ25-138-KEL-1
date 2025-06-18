@@ -19,7 +19,7 @@ class _DetailLaporanPageState extends State<DetailLaporanPage> {
     super.initState();
     // Ambil detail laporan saat halaman dibuka
     Future.microtask(() {
-      if (!mounted) return; // Pastikan widget masih ada di tree
+      // ignore: use_build_context_synchronously
       final provider = Provider.of<GetDetailLaporanProvider>(context, listen: false);
       provider.fetchLaporanDetail(widget.laporanId);
     });

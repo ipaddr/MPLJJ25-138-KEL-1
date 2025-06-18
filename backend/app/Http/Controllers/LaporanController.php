@@ -16,26 +16,50 @@ class LaporanController extends Controller
     // Get All
     public function index()
     {
-        $laporan = Laporan::with('user')->get(); // load relasi 'user'
-        return response()->json($laporan);
+        $laporan = Laporan::with('user', 'sekolah', 'fotos.tag', 'status')->get(); // load relasi 'user'
+
+        // Ambil rata-rata rating per laporan
+        $laporanWithRating = $laporan->map(function ($item) {
+            $laporanData = $item->toArray(); // ubah model ke array
+            $laporanData['rating_laporan'] = $item->rata_rata_rating; // tambahkan rating langsung
+
+            return $laporanData; // tidak lagi pakai ['laporan' => ..., 'rating_laporan' => ...]
+        });
+
+        return response()->json([
+            'data' => $laporanWithRating
+        ], 200);
     }
 
     // GET detail laporan by ID
-    public function show($id)
+   public function show($id)
     {
-        $laporan = Laporan::with(['user', 'sekolah', 'fotos.tag'])
-                    ->findOrFail($id);
+        $laporan = Laporan::with(['user', 'sekolah', 'fotos.tag'])->findOrFail($id);
 
-        // Hitung rata-rata rating dari tabel ratings
-        $rating = Rating::where('fk_id_laporan', $id)->avg('nilai_rating');
+        // Ambil semua laporan milik user ini
+        $laporanUserIni = Laporan::with('rating')
+            ->where('fk_id_user', $laporan->fk_id_user)
+            ->get();
+
+        // Ambil semua nilai rating dari laporan-laporan milik user ini
+        $semuaRating = $laporanUserIni->flatMap(function ($laporan) {
+            return $laporan->rating->pluck('nilai_rating');
+        });
+
+        // Hitung rata-rata rating user
+        $userRating = $semuaRating->isNotEmpty()
+            ? round($semuaRating->avg(), 2)
+            : 0;
+
+        // Tambahkan rating user ke properti user
+        $laporanArray = $laporan->toArray();
+        $laporanArray['user']['rating'] = $userRating;
 
         return response()->json([
             'message' => 'Detail laporan berhasil diambil.',
-            'data' => $laporan,
-            'rating' => $rating ?? 0,
+            'data' => $laporanArray,
         ]);
     }
-
 
     // GET laporan hari ini
     public function laporanHariIni()
@@ -44,14 +68,47 @@ class LaporanController extends Controller
             $hariIni = Carbon::now('Asia/Jakarta')->toDateString(); // WIB
             Log::info("Mengambil laporan untuk tanggal: $hariIni (WIB)");
 
-            $laporan = Laporan::with(['user'])
-                ->whereDate('tanggal_pelaporan', $hariIni)
-                ->get();
+           $laporan = Laporan::with('user', 'sekolah', 'fotos.tag')
+               ->whereDate('tanggal_pelaporan', $hariIni)
+               ->get();
 
-            return response()->json($laporan);
+            // Ambil rata-rata rating per laporan dan rating user
+            $laporanWithRating = $laporan->map(function ($item) {
+                $laporanData = $item->toArray();
+
+                // Set rating_laporan (rata-rata untuk laporan ini saja)
+                $laporanData['rating_laporan'] = $item->rata_rata_rating ?? 0;
+
+                // Pastikan struktur user tersedia
+                if (!isset($laporanData['user'])) {
+                    $laporanData['user'] = [];
+                }
+
+                // Cari semua laporan milik user ini
+                $laporanUserIni = Laporan::with('rating')
+                    ->where('fk_id_user', $item->fk_id_user)
+                    ->get();
+
+                // Ambil semua nilai rating dari laporan-laporan milik user ini
+                $semuaRating = $laporanUserIni->flatMap(function ($laporan) {
+                    return $laporan->rating->pluck('nilai_rating');
+                });
+
+                // Hitung rata-rata rating user
+                $laporanData['user']['rating'] = $semuaRating->isNotEmpty()
+                    ? round($semuaRating->avg(), 2)
+                    : 0;
+
+                return $laporanData;
+            })->values();
+
+            return response()->json([
+                'data' => $laporanWithRating
+            ], 200);
+            
         } catch (\Exception $e) {
             Log::error("Gagal ambil laporan hari ini: " . $e->getMessage());
-            return response()->json([], 200);
+            return response()->json([], 500);
         }
     }
 
@@ -139,8 +196,8 @@ class LaporanController extends Controller
         return response()->json(['message' => 'Laporan berhasil dihapus.']);
     }
 
-    // Rate laporan
-   public function rate(Request $request, $id)
+    // Rate untuk update rating laporan
+    public function rate(Request $request, $id)
     {
         $validated = $request->validate([
             'rating' => 'required|numeric|min:1|max:5',
@@ -155,12 +212,56 @@ class LaporanController extends Controller
             $existingRating->update(['nilai_rating' => $validated['rating']]);
         } else {
             $laporan->rating()->create([
-                'fk_id_user' => Auth::id(),
+                'fk_id_user' => Auth::id("id_user"),
                 'nilai_rating' => $validated['rating'],
             ]);
         }
 
         return response()->json(['message' => 'Rating berhasil disimpan.']);
+    }
+
+    // Get laporan yang telah diterima
+    public function laporanDiterima()
+    {
+        // Ambil laporan yang diterima
+        $laporan = Laporan::with(['user', 'sekolah', 'fotos.tag'])
+            ->whereHas('status', function ($query) {
+                $query->where('status', 'Diterima');
+            })
+            ->get();
+
+        Log::info("Mengambil laporan yang telah diterima." . $laporan->count() . " laporan ditemukan.");
+
+        // Ambil rata-rata rating per laporan
+        $laporanWithRating = $laporan->map(function ($item) {
+            $laporanData = $item->toArray();
+            $laporanData['rating_laporan'] = $item->rata_rata_rating ?? 0;
+
+            // Pastikan struktur user tersedia
+            if (!isset($laporanData['user'])) {
+                $laporanData['user'] = [];
+            }
+
+            // Cari semua laporan milik user ini
+            $laporanUserIni = Laporan::with('rating')
+                ->where('fk_id_user', $item->fk_id_user)
+                ->get();
+
+            // Ambil semua nilai rating dari laporan-laporan milik user ini
+            $semuaRating = $laporanUserIni->flatMap(function ($laporan) {
+                return $laporan->rating->pluck('nilai_rating');
+            });
+
+            // Hitung rata-rata rating user
+            $laporanData['user']['rating'] = $semuaRating->isNotEmpty()
+                ? round($semuaRating->avg(), 2)
+                : 0;
+
+            return $laporanData;
+        })->values();
+        return response()->json([
+            'data' => $laporanWithRating
+        ], 200);
     }
 
 }

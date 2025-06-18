@@ -31,7 +31,7 @@ class GetDetailLaporanProvider with ChangeNotifier {
         debugPrint('Response status code: ${response.statusCode}');
        
         final jsonBody = jsonDecode(response.body);
-         debugPrint('Response body: ${response.body}');
+        debugPrint('Response body: ${response.body}');
         _laporan = Laporan.fromJson(jsonBody['data']);
       } else {
         _error = 'Gagal mengambil data: ${response.statusCode}';

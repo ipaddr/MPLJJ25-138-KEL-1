@@ -38,24 +38,29 @@ Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->gr
 // Api routes for Laporan
 Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->group(function ()  {
     Route::get('/api/laporan/hari_ini', [LaporanController::class, 'laporanHariIni']);
-    Route::get('/api/laporan', [LaporanController::class, 'index']);
-    Route::get('/api/laporan/{id}', [LaporanController::class, 'show']);
+   //Route::get('/api/laporan', [LaporanController::class, 'index']);
+    Route::get('/api/laporan_id/{id}', [LaporanController::class, 'show']);
     Route::post('/api/laporan', [LaporanController::class, 'store']);
     Route::put('/api/laporan/{id}', [LaporanController::class, 'update']);
     Route::delete('/api/laporan/{id}', [LaporanController::class, 'destroy']);
 
     // Route untuk rating laporan
     Route::post('/api/laporan/{id}/rating', [LaporanController::class, 'rate']);
+
+    // Route untuk laporan yang telah di terima
+    Route::get('/api/laporan/diterima', [LaporanController::class, 'laporanDiterima']);
 });
 
-// Api routes Testing tanpa middleware auth
+// Api routes testing
 Route::withoutMiddleware(VerifyCsrfToken::class)->group(function () {
-   Route::get('/api/laporan/{id}', [LaporanController::class, 'show']);
+    Route::get('/api/testing/laporan/hari_ini', [LaporanController::class, 'laporanHariIni']);
+    Route::get('/api/testing/laporan_id/{id}', [LaporanController::class, 'show']);
+    Route::get('/api/testing/laporan/diterima', [LaporanController::class, 'laporanDiterima']);
 });
+
 
 // Api routes for Progress
 Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->group(function () {
-    Route::get('/api/progress', [ProgressController::class, 'index']);
     Route::post('/api/progress', [ProgressController::class, 'store']);
     Route::put('/api/progress/{id}', [ProgressController::class, 'update']);
     Route::delete('/api/progress/{id}', [ProgressController::class, 'destroy']);
