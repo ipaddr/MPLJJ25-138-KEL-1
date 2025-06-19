@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:report_school/theme/app_theme.dart';
 
 import '../../component/window/konfirmasi_window.dart';
 import '../../controller/tag_foto_controller.dart';
@@ -96,39 +97,42 @@ class _UploadDokumenWindowState extends State<UploadDokumenWindow> {
   @override
   Widget build(BuildContext context) {
     final tagCtrl = Provider.of<TagFotoController>(context);
-
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.all(24),
-        padding: const EdgeInsets.all(16),
+return Center(
+  child: Stack(
+    clipBehavior: Clip.none,
+    children: [
+      // Kontainer utama window
+      Container(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
         ),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                width: double.infinity,
+                padding: const EdgeInsets.all(16),
                 decoration: const BoxDecoration(
-                  color: Colors.lightBlueAccent,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+                  color: AppTheme.blueCard,
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
                 child: const Center(
                   child: Text(
-                    'Dokumen Pendukung',
+                    'Tambah Gambar',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      fontSize: 16,
                       color: Colors.white,
                     ),
                   ),
                 ),
               ),
-
               const SizedBox(height: 16),
 
+              
               // Area Gambar
               GestureDetector(
                 onTap: _pickImage,
@@ -137,7 +141,7 @@ class _UploadDokumenWindowState extends State<UploadDokumenWindow> {
                   height: 140,
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(8),
                     image: _selectedImage != null
                         ? DecorationImage(
                             image: FileImage(_selectedImage!),
@@ -157,7 +161,6 @@ class _UploadDokumenWindowState extends State<UploadDokumenWindow> {
                       : null,
                 ),
               ),
-
               const SizedBox(height: 16),
 
               // Dropdown Tag
@@ -174,7 +177,7 @@ class _UploadDokumenWindowState extends State<UploadDokumenWindow> {
                 },
                 decoration: const InputDecoration(
                   labelText: 'Pilih Tag',
-                  border: OutlineInputBorder(),
+                  border: UnderlineInputBorder(),
                 ),
               ),
 
@@ -188,8 +191,8 @@ class _UploadDokumenWindowState extends State<UploadDokumenWindow> {
                       controller: newTagController,
                       decoration: InputDecoration(
                         hintText: "Tambahkan tag baru",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                        border: UnderlineInputBorder(
+                          borderRadius: BorderRadius.circular(4),
                         ),
                       ),
                     ),
@@ -201,31 +204,59 @@ class _UploadDokumenWindowState extends State<UploadDokumenWindow> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 20),
 
-              // Submit
-              ElevatedButton(
-                onPressed: _submit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[600],
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 32,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  "Submit",
-                  style: TextStyle(color: Colors.white),
+                child: ElevatedButton(
+                  onPressed: _submit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.greenCard,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 32,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    "Submit",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
       ),
-    );
+
+      // Tombol silang (pojok kanan luar window)
+      Positioned(
+        right: -15,
+        top: -15,
+        child: GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 255, 0, 0),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.close, size: 18, color: Colors.white),
+          ),
+        ),
+      ),
+    ],
+  ),
+);
   }
 }

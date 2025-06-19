@@ -103,7 +103,7 @@ class CardLaporanHome extends StatelessWidget {
                         children: [
                           StarCount(rating: (laporan.rating).toDouble()),
                           Text(
-                            '(4 user)', // Display rating with one decimal place
+                            ' ', // Display rating with one decimal place
                             style: const TextStyle(
                               fontSize: 12,
                               color: Color(0xFFFF9149),

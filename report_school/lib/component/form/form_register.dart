@@ -245,7 +245,13 @@ class _FormRegisterState extends State<FormRegister> {
                   backgroundColor: const Color(0xFFFF9149),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
-                child: isLoading ? const CircularProgressIndicator(color: Colors.white) : const Text('Register'),
+                child: isLoading ? const CircularProgressIndicator(color: Colors.white) : 
+                const Text(
+                  'Register',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
 
@@ -272,7 +278,14 @@ class _FormRegisterState extends State<FormRegister> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: countdown == 0 ? resendCode : null,
-                      child: Text(countdown == 0 ? 'Kirim Ulang' : 'Tunggu $countdown dtk'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2196F3),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: Text(
+                        countdown == 0 ? 'Kirim Ulang' : 'Tunggu $countdown dtk',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -280,8 +293,12 @@ class _FormRegisterState extends State<FormRegister> {
                     onPressed: verifyCode,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF4CAF50),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text('Verifikasi'),
+                    child: const Text(
+                      'Verifikasi',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),

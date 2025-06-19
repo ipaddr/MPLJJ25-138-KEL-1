@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:report_school/component/card_view/card_laporan_detail_admin.dart';
-import '../component/card_view/card_file_pendukung.dart';
-import '../providers/get_laporan_detail_provider.dart';
+import '../../component/card_view/card_file_pendukung.dart';
+import '../../providers/get_laporan_detail_provider.dart';
 
-class DetailLaporanPage extends StatefulWidget {
+class DetailLaporanPageAdmin extends StatefulWidget {
   final int laporanId;
 
-  const DetailLaporanPage({super.key, required this.laporanId});
+  const DetailLaporanPageAdmin({super.key, required this.laporanId});
 
   @override
-  State<DetailLaporanPage> createState() => _DetailLaporanPageState();
+  State<DetailLaporanPageAdmin> createState() => _DetailLaporanPageAdminState();
 }
 
-class _DetailLaporanPageState extends State<DetailLaporanPage> {
+class _DetailLaporanPageAdminState extends State<DetailLaporanPageAdmin> {
   @override
   void initState() {
     super.initState();

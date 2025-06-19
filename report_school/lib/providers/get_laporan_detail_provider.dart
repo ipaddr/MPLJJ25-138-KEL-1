@@ -44,7 +44,7 @@ class GetDetailLaporanProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Add this method to retrieve the token, adjust as needed for your app's storage mechanism
+  // Fungsi untuk mendapatkan token dari SharedPreferences
   Future<String> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token') ?? '';

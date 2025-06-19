@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../theme/app_theme.dart';
 import '../../models/progres.dart';
-import '../../pages/detail_progres_page.dart';
+import 'package:report_school/pages/detail_progres_page.dart';
+
 
 class CardProgress extends StatelessWidget {
   
@@ -27,32 +28,40 @@ class CardProgress extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Baris 1: Judul
-            Text(
-              progres.judul,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // Baris 2: Nama pengirim
-            Text(
-              progres.namaPengirim,
-              style: const TextStyle(fontSize: 14),
-            ),
-            const SizedBox(height: 8),
-
-            // Baris 3: Tanggal & tombol detail
+            // Baris 1: Judul & Tanggal
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Expanded(
+                  child: Text(
+                    progres.judul,
+                    style: Theme.of(context).textTheme.titleMedium,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Text(
                   tanggalFormatted,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppTheme.textColorBlack,
-                    fontWeight: FontWeight.bold,
-                  ),
+                        color: AppTheme.textColorBlack,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
+              ],
+            ),
+
+            const SizedBox(height: 8),
+
+            // Baris 2: Tanggal & tombol detail
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Baris 2: Nama pengirim
+                Text(
+                  progres.namaPengirim,
+                  style: const TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 8),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.blueCard,
@@ -62,7 +71,10 @@ class CardProgress extends StatelessWidget {
                   ),
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => const DetailProgresPage(),
+                      builder: (context) => DetailProgresPage(
+                        // Menggunakan id progres untuk mengambil detail progres
+                        progresId: progres.id, // Progres harus diisi dengan data yang sesuai
+                      ),
                     ));
                   },
                   child: const Text(
@@ -72,6 +84,23 @@ class CardProgress extends StatelessWidget {
                 ),
               ],
             ),
+
+            const SizedBox(height: 8),
+
+            // Baris 3: Progress persen
+            Row(
+              children: [
+                Expanded(
+                  child: LinearProgressIndicator(
+                    value: progres.persen / 100,
+                    backgroundColor: AppTheme.progressCard_2,
+                    color: AppTheme.progressCard,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text('${progres.persen.toStringAsFixed(0)}%'),
+              ],
+            )
           ],
         ),
       ),

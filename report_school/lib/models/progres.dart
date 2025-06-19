@@ -1,4 +1,5 @@
 import 'user.dart';
+import '../config/api.dart';
 
 class Progres {
   final int id; // <- ini sebenarnya ID dari progress (id_progress)
@@ -13,7 +14,7 @@ class Progres {
   final User user;
   final int? idProgressSebelumnya;
 
-  static const String pathUrl = 'http://192.168.108.167:8000/storage/';
+  static const String pathUrl = '$hostFilePendukung:$portFilePendukung/storage/';
 
   Progres({
     required this.id,

@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:report_school/pages/admin/detail_laporan_admin_page.dart';
 import '../../models/laporan.dart';
 import '../../theme/app_theme.dart';
-import '../../pages/detail_laporan_page.dart';
 import '../elements/star_count.dart';
 import '../window/berikan_rating_laporan_window.dart';
 
-class CardLaporan extends StatelessWidget {
+
+class CardLaporanAdmin extends StatelessWidget {
   final Laporan laporan;
 
-  const CardLaporan({super.key, required this.laporan});
+  const CardLaporanAdmin({
+    super.key,
+    required this.laporan,
+    required this.onStatusUpdated,
+  });
+
+  final Function onStatusUpdated;
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +79,15 @@ class CardLaporan extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DetailLaporanPage(laporanId: laporan.id),
+                        builder: (context) => DetailLaporanPageAdmin(
+                          laporanId: laporan.id,
+                        ),
                       ),
-                    );
+                    ).then((result) {
+                      if (result == true) {
+                        onStatusUpdated(); // refresh dari atas
+                      }
+                    });
                   },
                   child: const Text(
                     'Detail Laporan',

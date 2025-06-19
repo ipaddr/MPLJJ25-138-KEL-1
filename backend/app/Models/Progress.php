@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Log;
 
 class Progress extends Model
 {
@@ -50,5 +51,18 @@ class Progress extends Model
     public function laporan()
     {
         return $this->belongsToMany(Laporan::class, 'laporan_progress', 'fk_id_progress', 'fk_id_laporan');
+    }
+
+    public function addLaporanToProgress(int $id_laporan)
+    {
+        LaporanProgress::create([
+            'fk_id_progress' => $this->id_progress,
+            'fk_id_laporan' => $id_laporan,
+        ]);
+
+        Log::info('Laporan ditambahkan ke progress', [
+            'progress_id' => $this->id_progress,
+            'laporan_id' => $id_laporan,
+        ]);
     }
 }

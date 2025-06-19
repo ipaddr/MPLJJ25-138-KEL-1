@@ -1,24 +1,26 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:report_school/controller/sekolah_controller.dart';
+import 'package:report_school/component/window/dialog_window.dart';
+import 'package:report_school/controller/laporan_controller.dart';
 import 'package:report_school/models/tag_foto.dart';
 import 'package:report_school/component/window/konfirmasi_window.dart';
 import 'package:report_school/component/window/insert_gambar_window.dart';
 import 'package:report_school/providers/laporan_provider.dart';
 import 'package:report_school/utils/dialog_helper.dart';
+import 'package:report_school/theme/app_theme.dart';
 
 class LaporanFormCard extends StatefulWidget {
-  final TextEditingController judulController;
-  final TextEditingController isiController;
+  final TextEditingController judulLaporan;
+  final TextEditingController isiLaporan;
   final String? selectedSekolah;
   final List<String> daftarSekolah;
   final Function(String?) onSekolahChanged;
 
   const LaporanFormCard({
     super.key,
-    required this.judulController,
-    required this.isiController,
+    required this.judulLaporan,
+    required this.isiLaporan,
     required this.selectedSekolah,
     required this.daftarSekolah,
     required this.onSekolahChanged,
@@ -33,6 +35,9 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
   final List<TagFoto> _selectedTags = [];
   bool isSubmitting = false;
   String? errorMessage;
+
+  // UI 
+  double cardRadius = 16;
 
   Future<void> pickImagesWithWindow() async {
     await showDialog(
@@ -73,7 +78,7 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
   }
 
   Future<void> submitForm() async {
-    final sekolahCtrl = Provider.of<SekolahController>(context, listen: false);
+    final sekolahCtrl = Provider.of<LaporanController>(context, listen: false);
     final laporanProvider = Provider.of<LaporanProvider>(context, listen: false);
     final selectedId = sekolahCtrl.getSelectedSekolahId();
 
@@ -83,17 +88,17 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
     });
 
     final result = await laporanProvider.kirimLaporan(
-      judul: widget.judulController.text,
-      isi: widget.isiController.text,
+      judul: widget.judulLaporan.text,
+      isi: widget.isiLaporan.text,
       idSekolah: selectedId,
       images: _selectedImages,
       tags: _selectedTags,
     );
 
     if (result.success) {
-      widget.judulController.clear();
+      widget.judulLaporan.clear();
       sekolahCtrl.updateSelectedSekolah(null); // Reset pilihan sekolah
-      widget.isiController.clear();
+      widget.isiLaporan.clear();
       setState(() {
         _selectedImages.clear();
         _selectedTags.clear();
@@ -107,16 +112,10 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
         context: context,
         builder: (_) => Dialog(
           backgroundColor: Colors.transparent,
-          child: SystemMessageCard(
-            message: 'Laporan berhasil dikirim.',
-            yesText: 'OK',
+          child: SystemMessageCardOke(
+            message: 'Laporan berhasil dikirim',
           ),
         ),
-      );
-
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Laporan berhasil dikirim.')),
       );
     } else {
       setState(() {
@@ -141,27 +140,29 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        const Text('Informasi Umum', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text('Informasi Umum', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        ),
         const SizedBox(height: 10),
         Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(cardRadius)),
           elevation: 4,
           child: Padding(
             padding: const EdgeInsets.all(32),
             child: Column(
               children: [
                 TextField(
-                  controller: widget.judulController,
+                  controller: widget.judulLaporan,
                   decoration: const InputDecoration(
                     labelText: 'Judul Laporan',
-                    hintText: 'contoh nama laporan...',
-                    border: OutlineInputBorder(),
+                    border: UnderlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  
                   value: widget.selectedSekolah,
                   items: widget.daftarSekolah.map((sekolah) {
                     return DropdownMenuItem(
@@ -172,7 +173,17 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
                   onChanged: widget.onSekolahChanged,
                   decoration: const InputDecoration(
                     labelText: 'Pilih Sekolah',
-                    border: OutlineInputBorder(),
+                    border: UnderlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: widget.isiLaporan,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  decoration: const InputDecoration(
+                    labelText: 'Isi Laporan',
+                    border: UnderlineInputBorder(),
                   ),
                 ),
               ],
@@ -180,29 +191,41 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
           ),
         ),
         const SizedBox(height: 16),
-        Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          elevation: 4,
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: TextField(
-              controller: widget.isiController,
-              maxLines: 5,
-              decoration: const InputDecoration(
-                labelText: 'Isi Laporan',
-                border: OutlineInputBorder(),
+        
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text('File Pendukung', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        ),
+        
+        const SizedBox(height: 10),
+
+        // Button untuk memilih gambar
+        Container(
+          height: 50, // Tinggi tombol
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          child: ElevatedButton.icon(
+            onPressed: pickImagesWithWindow,
+            icon: const Icon(Icons.image),
+            label: const Text(
+              'Pilih Gambar',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.blueCard,
+              iconColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                
+                borderRadius: BorderRadius.circular(cardRadius),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 16),
-        const Text('File Pendukung', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        const SizedBox(height: 10),
-        ElevatedButton.icon(
-          onPressed: pickImagesWithWindow,
-          icon: const Icon(Icons.image),
-          label: const Text('Pilih Gambar'),
-        ),
+
+
         const SizedBox(height: 10),
         if (_selectedImages.isNotEmpty)
           Wrap(
@@ -246,9 +269,11 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
             }),
           ),
         const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          height: 45,
+
+        // Tombol untuk mengirim laporan
+        Container(
+          height: 50, // Tinggi tombol
+          margin: const EdgeInsets.symmetric(horizontal: 4),
           child: ElevatedButton.icon(
             onPressed: isSubmitting ? null : submitForm,
             icon: isSubmitting
@@ -258,7 +283,21 @@ class _LaporanFormCardState extends State<LaporanFormCard> {
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
                 : const Icon(Icons.send),
-            label: const Text('Kirim Laporan'),
+            label: const Text(
+              'Kirim Laporan',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.greenCard,
+              iconColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(cardRadius),
+              ),
+            ),
           ),
         ),
       ],

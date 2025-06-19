@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:report_school/component/window/result_analisis_window.dart';
 import '../../models/laporan.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import '../../pages/detail_laporan_page.dart';
 
 class CardLaporanAnalisis extends StatelessWidget {
   final Laporan laporan;
@@ -78,7 +79,12 @@ class CardLaporanAnalisis extends StatelessWidget {
                     width: 130,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Aksi untuk detail laporan
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailLaporanPage(laporanId: laporan.id),
+                              ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,

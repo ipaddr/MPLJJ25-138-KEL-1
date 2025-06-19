@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../component/form/form_laporan.dart';
-import '../controller/sekolah_controller.dart';
+import '../controller/laporan_controller.dart';
 
 class FormLaporanPage extends StatefulWidget {
   const FormLaporanPage({super.key});
@@ -18,15 +18,15 @@ class _FormLaporanPageState extends State<FormLaporanPage> {
     super.initState();
     // Ambil data sekolah saat pertama kali halaman dibuka
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final sekolahCtrl = Provider.of<SekolahController>(context, listen: false);
-      await sekolahCtrl.fetchSekolah();
+      final laporanCtrl = Provider.of<LaporanController>(context, listen: false);
+      await laporanCtrl.fetchSekolah();
       if (mounted) setState(() => _isLoading = false);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final sekolahCtrl = Provider.of<SekolahController>(context);
+    final laporanCtrl = Provider.of<LaporanController>(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Form Laporan')),
@@ -38,11 +38,11 @@ class _FormLaporanPageState extends State<FormLaporanPage> {
                 children: [
                   const SizedBox(height: 8),
                   LaporanFormCard(
-                    judulController: sekolahCtrl.judulController,
-                    isiController: sekolahCtrl.isiController,
-                    selectedSekolah: sekolahCtrl.selectedNamaSekolah,
-                    daftarSekolah: sekolahCtrl.daftarNamaSekolah,
-                    onSekolahChanged: sekolahCtrl.updateSelectedSekolah,
+                    judulLaporan: laporanCtrl.judulLaporan,
+                    isiLaporan: laporanCtrl.isiLaporan,
+                    selectedSekolah: laporanCtrl.selectedNamaSekolah,
+                    daftarSekolah: laporanCtrl.daftarNamaSekolah,
+                    onSekolahChanged: laporanCtrl.updateSelectedSekolah,
                   ),
                 ],
               ),

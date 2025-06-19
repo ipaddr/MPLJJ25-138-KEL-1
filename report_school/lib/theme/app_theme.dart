@@ -27,6 +27,9 @@ class AppTheme {
     106,
   ); // Hijau untuk card
 
+  static const Color progressCard = Color(0xFF6750A4); // Ungu untuk card
+  static const Color progressCard_2 = Color(0xFFF8DEF5); // Abu-abu untuk card
+
   static const Color orangeCard = Color(0xFFFFA726); // Oranye untuk card
   static const Color orangeCard_185 = Color.fromARGB(
     185,

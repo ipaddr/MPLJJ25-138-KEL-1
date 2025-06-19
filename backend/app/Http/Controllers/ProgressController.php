@@ -15,22 +15,60 @@ use function Laravel\Prompts\progress;
 
 class ProgressController extends Controller
 {
-    // Ambil semua data progress
+    // Ambil semua data progress yang belum selesai
+    // (persen_progress < 100)
     public function index()
     {
-        $progress = Progress::with(['user', 'previous', 'laporan', 'fotos'])->get();
-        return response()->json($progress);
+        $progress = Progress::with(['user', 'previous', 'laporan', 'fotos'])
+            ->where('persen_progress', '<', 100)
+            ->get();
+
+        return response()->json([
+            'message' => 'Berhasil mengambil semua progress yang belum selesai.',
+            'data' => $progress
+        ]);
+    }
+
+    // GET detail progress by ID
+   public function show($id)
+    {
+        $progress = Progress::with(['user', 'previous', 'laporan', 'fotos.tag'])
+            ->findOrFail($id);
+        
+        return response()->json([
+            'message' => 'Berhasil mengambil detail progress.',
+            'data' => $progress
+        ]);
+    }
+
+    // Ambil progress yang sudah selesai (persen_progress = 100)
+    public function progressSelesai()
+    {
+        $progress = Progress::with(['user', 'previous', 'laporan', 'fotos'])
+            ->where('persen_progress', 100)
+            ->get();
+
+        return response()->json([
+            'message' => 'Berhasil mengambil progress yang sudah selesai.',
+            'data' => $progress
+        ]);
     }
 
     // Tambah progress baru
     public function store(Request $request)
     {   
+        Log::info('data request untuk membuat progress', [
+            'user_id' => Auth::id(),
+            'request_data' => $request->all()
+        ]);
+
         $validated = $request->validate([
             'nama_progress' => 'required|string',
             'isi_progress' => 'required|string',
             'persen_progress' => 'required|numeric|min:0|max:100',
             'fk_id_progress_sebelumnya' => 'nullable|exists:progress,id_progress',
-            'fk_id_laporan' => 'required|exists:laporan,id_laporan',
+            'fk_id_laporan' => 'nullable|array',
+            'fk_id_laporan.*' => 'exists:laporan,id_laporan',
         ]);
 
         $progress = Progress::create([
@@ -43,8 +81,14 @@ class ProgressController extends Controller
         ]);
 
         // Hubungkan progress ke laporan
-        Laporan::where('id_laporan', $validated['fk_id_laporan'])
-            ->update(['fk_id_progress' => $progress->id_progress]);
+        if (!empty($validated['fk_id_laporan'])) {
+            foreach ($validated['fk_id_laporan'] as $idLaporan) {
+                $progress->addLaporanToProgress($idLaporan);
+            }
+
+            Laporan::whereIn('id_laporan', $validated['fk_id_laporan'])
+                ->update(['fk_id_progress' => $progress->id_progress]);
+        }
 
         // Upload dan hubungkan foto jika ada
         if ($request->hasFile('fotos')) {
@@ -73,7 +117,6 @@ class ProgressController extends Controller
             'data' => $progress->load(['user', 'fotos.tag']),
         ], 201);
     }
-
 
     // Update progress (admin only)
     public function update(Request $request, $id)

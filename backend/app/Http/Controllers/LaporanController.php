@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Laporan;
 use App\Models\Foto;
+use App\Models\LaporanProgress;
+use App\Models\Progress;
 use App\Models\TagFoto;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Rating;
+use App\Models\StatusLaporan;
 
 class LaporanController extends Controller
 {
@@ -34,7 +37,7 @@ class LaporanController extends Controller
     // GET detail laporan by ID
    public function show($id)
     {
-        $laporan = Laporan::with(['user', 'sekolah', 'fotos.tag'])->findOrFail($id);
+        $laporan = Laporan::with(['user', 'sekolah', 'fotos.tag', 'status'])->findOrFail($id);
 
         // Ambil semua laporan milik user ini
         $laporanUserIni = Laporan::with('rating')
@@ -110,6 +113,22 @@ class LaporanController extends Controller
             Log::error("Gagal ambil laporan hari ini: " . $e->getMessage());
             return response()->json([], 500);
         }
+    }
+
+    // GET laporan belum diterima
+    public function laporanBelumDiterima()
+    {
+        $laporan = Laporan::with(['user', 'sekolah', 'fotos.tag'])
+            ->whereDoesntHave('status', function ($query) {
+                $query->where('status', 'diterima');
+            })
+            ->whereDoesntHave('progress') // Pastikan laporan belum ada di progress
+            ->get();
+
+        return response()->json([
+            'message' => 'Laporan belum diterima berhasil diambil.',
+            'data' => $laporan,
+        ]);
     }
 
     // Store
@@ -224,11 +243,11 @@ class LaporanController extends Controller
     public function laporanDiterima()
     {
         // Ambil laporan yang diterima
-        $laporan = Laporan::with(['user', 'sekolah', 'fotos.tag'])
-            ->whereHas('status', function ($query) {
-                $query->where('status', 'Diterima');
-            })
-            ->get();
+       $laporan = Laporan::with(['user', 'sekolah', 'fotos.tag', 'progress'])
+        ->whereHas('status', function ($query) {
+            $query->where('status', 'diterima');
+        })
+        ->get();
 
         Log::info("Mengambil laporan yang telah diterima." . $laporan->count() . " laporan ditemukan.");
 
@@ -236,6 +255,9 @@ class LaporanController extends Controller
         $laporanWithRating = $laporan->map(function ($item) {
             $laporanData = $item->toArray();
             $laporanData['rating_laporan'] = $item->rata_rata_rating ?? 0;
+
+            // set fk_id_progress ke ''
+            $laporanData['fk_id_progress'] = '';
 
             // Pastikan struktur user tersedia
             if (!isset($laporanData['user'])) {
@@ -264,4 +286,43 @@ class LaporanController extends Controller
         ], 200);
     }
 
+    // Set status laporan
+    public function setStatus(Request $request)
+    {
+        $validated = $request->validate([
+            'id_laporan' => 'required|exists:laporan,id_laporan',
+            'status' => 'required|in:diterima,ditolak',
+        ]);
+        $laporan = Laporan::findOrFail($validated['id_laporan']);
+
+        // Buat status baru di laporan_status
+        $status = StatusLaporan::create([
+            'status' => $validated['status'],
+            'tanggal' => now(),
+        ]);
+
+        // Update fk_id_status_laporan di tabel laporan
+        $laporan->update([
+            'fk_id_status_laporan' => $status->id_status_laporan,
+        ]);
+
+        return response()->json([
+            'message' => 'Status laporan berhasil diubah.',
+        ]);
+    }
+
+    // Get laporan yang berhubungan dengan id progress
+    public function getLaporanByProgressId($id)
+    {
+        if (!Progress::where('id_progress', $id)->exists()) {
+            return response()->json(['message' => 'Progress tidak ditemukan.'], 404);
+        }
+
+        $laporan = LaporanProgress::with(['laporan.user', 'laporan.sekolah', 'laporan.fotos.tag'])
+            ->where('fk_id_progress', $id)
+            ->get()
+            ->pluck('laporan');
+
+        return response()->json(['message' => 'Laporan ditemukan.', 'data' => $laporan]);
+    }
 }

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../pages/form_laporan_page.dart';
 import '../theme/app_theme.dart';
-import '../providers/home_provider.dart';
 import '../providers/pengumuman_provider.dart';
 import '../component/card_view/card_laporan_home.dart';
 import '../component/card_view/card_pengumuman.dart';
 import '../pages/form_progres_page.dart';
+import '../providers/laporan_provider.dart';
+import '../providers/auth_provider.dart';
+import 'admin/analisis_laporan_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,27 +25,27 @@ class _HomePageState extends State<HomePage> {
     // Fetch laporan dan pengumuman saat pertama kali dibuka
     Future.microtask(() {
       // ignore: use_build_context_synchronously
-      final laporanProvider = Provider.of<HomeProvider>(context, listen: false);
+      final checkAdmin = Provider.of<AuthProvider>(context, listen: false);
+      // ignore: use_build_context_synchronously
+      final laporanHariIniProvider = Provider.of<LaporanProvider>(context, listen: false);
       // ignore: use_build_context_synchronously
       final pengumumanProvider = Provider.of<PengumumanProvider>(context, listen: false);
-      // ignore: use_build_context_synchronously
-      final checkAdmin = Provider.of<HomeProvider>(context, listen: false);
 
-      laporanProvider.fetchLaporanHariIni();
       checkAdmin.checkIsAdmin();
+      laporanHariIniProvider.fetchLaporanHariIni();
       pengumumanProvider.addDummyPengumuman();
     });
   }
 
   Future<void> _refreshData() async {
-    await context.read<HomeProvider>().fetchLaporanHariIni();
+    await context.read<LaporanProvider>().fetchLaporanHariIni();
     // ignore: use_build_context_synchronously
-    await context.read<HomeProvider>().checkIsAdmin();
+    await context.read<AuthProvider>().checkIsAdmin();
   }
 
   @override
   Widget build(BuildContext context) {
-    final laporanListHariIni = context.watch<HomeProvider>().laporanHariIniList;
+    final laporanListHariIni = context.watch<LaporanProvider>().laporanHariIniList;
     final pengumumanList = context.watch<PengumumanProvider>().pengumumanList;
 
     return Scaffold(
@@ -95,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                     color: Theme.of(context).colorScheme.onSurface,
                     margin: const EdgeInsets.symmetric(vertical: 8),
                   ),
-                 Consumer<HomeProvider>(
+                 Consumer<LaporanProvider>(
                     builder: (context, provider, _) {
                       return ListView.builder(
                         shrinkWrap: true,
@@ -113,7 +115,7 @@ class _HomePageState extends State<HomePage> {
           ),
 
           // Fitur User
-          if (!context.watch<HomeProvider>().isAdmin) ...[
+          if (!context.watch<AuthProvider>().isAdmin) ...[
             // --- FAB Tambah Laporan ---
             Positioned(
               bottom: 16,
@@ -126,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                     MaterialPageRoute(builder: (context) => const FormLaporanPage()),
                   ).then((_) {
                     // ignore: use_build_context_synchronously
-                    context.read<HomeProvider>().fetchLaporanHariIni();
+                    context.read<LaporanProvider>().fetchLaporanHariIni();
                   });
                 },
                 backgroundColor: AppTheme.greenCard_185,
@@ -137,7 +139,7 @@ class _HomePageState extends State<HomePage> {
           ],
 
           // Fitur Admin
-          if (context.watch<HomeProvider>().isAdmin) ...[
+          if (context.watch<AuthProvider>().isAdmin) ...[
               // --- FAB Analisis ---
               Positioned(
                 bottom: 16,
@@ -145,14 +147,14 @@ class _HomePageState extends State<HomePage> {
                 child: FloatingActionButton(
                   heroTag: "fabAnalisis",
                   onPressed: () {
-                    /*
+                    
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const ListLaporanPageAnalisis()),
                     ).then((_) {
-                      context.read<HomeProvider>().fetchLaporanHariIni();
+                      // ignore: use_build_context_synchronously
+                      context.read<LaporanProvider>().fetchLaporan();
                     });
-                    */
                 },
                 backgroundColor: AppTheme.orangeCard_185,
                 tooltip: "Analisis Laporan",
@@ -162,7 +164,7 @@ class _HomePageState extends State<HomePage> {
           ],
 
           // Fitur Admin
-          if (context.watch<HomeProvider>().isAdmin) ...[
+          if (context.watch<AuthProvider>().isAdmin) ...[
             // --- FAB Progres ---
             Positioned(
               bottom: 16, // + 70 jika mau di atas FAB Tambah
@@ -175,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                     MaterialPageRoute(builder: (context) => const FormProgresPage()),
                   ).then((_) {
                     // ignore: use_build_context_synchronously
-                    context.read<HomeProvider>().fetchLaporanHariIni();
+                    context.read<LaporanProvider>().fetchLaporanHariIni();
                   });
                 },
                 backgroundColor: AppTheme.greenCard_185,

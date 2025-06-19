@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/home_provider.dart';
+import 'package:report_school/component/card_view/card_laporan_admin.dart';
 import '../component/card_view/card_laporan.dart';
+import '../providers/laporan_provider.dart';
+import '../providers/auth_provider.dart';
 
 class ListLaporanPage extends StatefulWidget {
   const ListLaporanPage({super.key});
@@ -22,13 +24,22 @@ class _ListLaporanPageState extends State<ListLaporanPage> {
 
     Future.microtask(() async {
       try {
-        // Fetch laporan diterima
+        // Set loading state awal
+        setState(() {
+          _isLoading = true;
+          _isTimeout = false;
+        });
+
+        // Ambil data laporan diterima dan cek admin
         // ignore: use_build_context_synchronously
-        final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+        final laporanList = Provider.of<LaporanProvider>(context, listen: false);
+        // ignore: use_build_context_synchronously
+        final checkAdmin = Provider.of<AuthProvider>(context, listen: false);
 
         await Future.wait([
-          homeProvider.fetchLaporanDiterima(),
-          homeProvider.checkIsAdmin(),
+          laporanList.fetchLaporanDiterima(),
+          laporanList.fetchLaporanBelumDiterima(), // Hanya kalau admin
+          checkAdmin.checkIsAdmin(),
         ]).timeout(
           Duration(seconds: _timeoutDuration),
           onTimeout: () {
@@ -61,10 +72,15 @@ class _ListLaporanPageState extends State<ListLaporanPage> {
     });
 
     try {
-      await Future.wait([
-        context.read<HomeProvider>().fetchLaporanDiterima(),
-        context.read<HomeProvider>().checkIsAdmin(),
-      ]).timeout(Duration(seconds: _timeoutDuration));
+      final laporanProvider = context.read<LaporanProvider>();
+      final authProvider = context.read<AuthProvider>();
+
+      await laporanProvider.fetchLaporanDiterima();
+      await authProvider.checkIsAdmin(); // Tunggu ini selesai dulu
+
+      if (authProvider.isAdmin) {
+        await laporanProvider.fetchLaporanBelumDiterima(); // Hanya kalau admin
+      }
 
       if (mounted) {
         setState(() {
@@ -84,7 +100,8 @@ class _ListLaporanPageState extends State<ListLaporanPage> {
 
   @override
   Widget build(BuildContext context) {
-    final laporanListDiterima = context.watch<HomeProvider>().laporanListDiterima;
+    final laporanListDiterima = context.watch<LaporanProvider>().laporanListDiterima;
+    final laporanListBelumDiterima = context.watch<LaporanProvider>().laporanListBelumDiterima;
 
     return Scaffold(
       appBar: AppBar(title: const Text('List Laporan')),
@@ -111,7 +128,7 @@ class _ListLaporanPageState extends State<ListLaporanPage> {
                 )
               : RefreshIndicator(
                   onRefresh: _refreshData,
-                  child: laporanListDiterima.isEmpty
+                  child: laporanListDiterima.isEmpty && laporanListBelumDiterima.isEmpty
                       ? ListView(
                           children: [
                             const SizedBox(height: 100),
@@ -149,6 +166,41 @@ class _ListLaporanPageState extends State<ListLaporanPage> {
                                   return CardLaporan(laporan: laporanListDiterima[index]);
                                 },
                               ),
+
+                              const SizedBox(height: 16),
+
+                              // Container Laporan Belum diterima
+                              if (context.watch<AuthProvider>().isAdmin) ...[
+                                if (laporanListBelumDiterima.isNotEmpty) ...[
+                                  Text(
+                                    'Laporan Belum Diterima',
+                                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).colorScheme.onSurface,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Container(
+                                    height: 1,
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    margin: const EdgeInsets.symmetric(vertical: 8),
+                                  ),
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: laporanListBelumDiterima.length,
+                                    itemBuilder: (context, index) {
+                                      return CardLaporanAdmin(
+                                        laporan: laporanListBelumDiterima[index],
+                                        onStatusUpdated: () {
+                                          _refreshData(); // refresh data setelah update status
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ],
+
                             ],
                           ),
                         ),

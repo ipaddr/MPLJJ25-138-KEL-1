@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../controller/sekolah_controller.dart';
 import 'package:provider/provider.dart';
 import '../component/form/form_progres.dart';
+import '../controller/progress_controller.dart';
 
 
 class FormProgresPage extends StatefulWidget {
@@ -15,10 +15,10 @@ class _ListLaporanPageState extends State<FormProgresPage> {
 
   @override
   Widget build(BuildContext context) {
-    final sekolahCtrl = Provider.of<SekolahController>(context);
+    final progressCtrl = Provider.of<ProgressController>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Form Laporan')),
+      appBar: AppBar(title: const Text('Form Progres')),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: ListView(
@@ -28,11 +28,11 @@ class _ListLaporanPageState extends State<FormProgresPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 LaporanProgresCard(
-                  judulController: sekolahCtrl.judulController,
-                  isiController: sekolahCtrl.isiController,
-                  selectedSekolah: sekolahCtrl.selectedNamaSekolah,
-                  daftarSekolah: sekolahCtrl.daftarNamaSekolah,
-                  onLaporanChanged: sekolahCtrl.updateSelectedSekolah,
+                  judulProgress: progressCtrl.judulProgress,
+                  isiProgress: progressCtrl.isiProgress,
+                  selectedLaporan: progressCtrl.selectedLaporan?.judul,
+                  daftarLaporan: progressCtrl.daftarJudulLaporan,
+                  onLaporanChanged: progressCtrl.updateSelectedLaporanByJudul,
                 ),
               ],
             ),

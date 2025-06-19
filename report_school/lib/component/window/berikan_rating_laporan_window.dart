@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/laporan.dart';
-import '../../providers/home_provider.dart';
+import '../../providers/laporan_provider.dart';
+
 
 class BerikanRatingLaporanWindow extends StatelessWidget {
   final Laporan laporan;
@@ -38,7 +39,7 @@ class BerikanRatingLaporanWindow extends StatelessWidget {
                   color: index < currentRating ? Colors.orange : Colors.grey,
                 ),
                 onPressed: () {
-                  Provider.of<HomeProvider>(context, listen: false)
+                  Provider.of<LaporanProvider>(context, listen: false)
                       .rateLaporan(laporan, index + 1.0);
                   Navigator.pop(context); // tutup window setelah pilih
                 },

@@ -4,6 +4,7 @@ import 'list_laporan_page.dart';
 import 'list_progres_page.dart';
 import '../component/nav/bottom_navigation.dart';
 
+
 class NavApp extends StatefulWidget {
   const NavApp({super.key}); // Pastikan constructor sama dengan nama class
 
@@ -17,7 +18,7 @@ class _NavAppState extends State<NavApp> {
   final List<Widget> _pages = const [
     HomePage(),
     ListLaporanPage(),
-    ListProgresPage(),
+    ListProgressPage(),
   ];
 
   @override

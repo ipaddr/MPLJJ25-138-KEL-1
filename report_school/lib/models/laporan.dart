@@ -1,4 +1,5 @@
 import 'user.dart';
+import '../config/api.dart';
 
 class Laporan {
   final int id;
@@ -11,9 +12,10 @@ class Laporan {
   final String? status;
   final List<String> fotoUrls;
   final List<String> tags;
-   final User user;
+  final User user;
+  final int? fkIdProgress;
 
-  static const String pathUrl = 'http://192.168.108.167:8000/storage/';
+  static const String pathUrl = '$hostFilePendukung:$portFilePendukung/storage/';
 
   Laporan({
     required this.id,
@@ -27,6 +29,7 @@ class Laporan {
     required this.fotoUrls,
     required this.tags,
     required this.user,
+    this.fkIdProgress,
   });
 
   factory Laporan.fromJson(Map<String, dynamic> json) {
@@ -34,13 +37,16 @@ class Laporan {
       id: json['id_laporan'],
       judul: json['judul_laporan'] ?? '',
       isi: json['isi_laporan'] ?? '',
+      fkIdProgress: json['fk_id_progress'] == null
+        ? null
+        : int.tryParse(json['fk_id_progress'].toString()),
       tanggal: DateTime.tryParse(json['tanggal_pelaporan'] ?? '') ?? DateTime.now(),
       namaPengirim: json['user']?['username'] ?? 'Anonim',
       rating: (json['rating_laporan'] != null)
           ? (json['rating_laporan'] as num).toDouble()
           : 0.0,
       namaSekolah: json['sekolah']?['nama_sekolah'] ?? 'Tidak diketahui',
-      status: json['status']?['nama_status'] ?? 'Belum diverifikasi',
+      status: json['status']?['status'] ?? 'Belum diverifikasi',
       user: User.fromJson(json['user']),
       fotoUrls: (json['fotos'] as List<dynamic>? ?? []).map<String>((f) {
         final path = f['data_foto'];

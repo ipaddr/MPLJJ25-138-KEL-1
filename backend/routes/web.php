@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->gr
 
 // Api routes for Laporan
 Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->group(function ()  {
+    Route::get('/api/laporan/all', [LaporanController::class, 'index']);
     Route::get('/api/laporan/hari_ini', [LaporanController::class, 'laporanHariIni']);
    //Route::get('/api/laporan', [LaporanController::class, 'index']);
     Route::get('/api/laporan_id/{id}', [LaporanController::class, 'show']);
@@ -49,6 +50,15 @@ Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->gr
 
     // Route untuk laporan yang telah di terima
     Route::get('/api/laporan/diterima', [LaporanController::class, 'laporanDiterima']);
+
+    // Route untuk laporan yang belum di terima
+    Route::get('/api/laporan/belum_diterima', [LaporanController::class, 'laporanBelumDiterima']);
+
+    // Route untuk set laporan status
+    Route::post('/api/laporan/status', [LaporanController::class, 'setStatus']);
+
+    // Route ambil semua laporan yang berhubungan dengan id progress
+    Route::get('/api/laporan_terkait/progress/{id}', [LaporanController::class, 'getLaporanByProgressId']);
 });
 
 // Api routes testing
@@ -56,11 +66,17 @@ Route::withoutMiddleware(VerifyCsrfToken::class)->group(function () {
     Route::get('/api/testing/laporan/hari_ini', [LaporanController::class, 'laporanHariIni']);
     Route::get('/api/testing/laporan_id/{id}', [LaporanController::class, 'show']);
     Route::get('/api/testing/laporan/diterima', [LaporanController::class, 'laporanDiterima']);
+    Route::get('/api/testing/laporan/belum_diterima', [LaporanController::class, 'laporanBelumDiterima']);
+    Route::get('/api/testing/progress', [ProgressController::class, 'index']);
+    Route::get('/api/testing/laporan_terkait/{id}', [LaporanController::class, 'getLaporanByProgressId']);
 });
 
 
 // Api routes for Progress
 Route::middleware('auth:sanctum')->withoutMiddleware(VerifyCsrfToken::class)->group(function () {
+    Route::get('/api/progress/all', [ProgressController::class, 'index']);
+    Route::get('/api/progress/selesai', [ProgressController::class, 'progressSelesai']);
+    Route::get('/api/progress_id/{id}', [ProgressController::class, 'show']);
     Route::post('/api/progress', [ProgressController::class, 'store']);
     Route::put('/api/progress/{id}', [ProgressController::class, 'update']);
     Route::delete('/api/progress/{id}', [ProgressController::class, 'destroy']);
