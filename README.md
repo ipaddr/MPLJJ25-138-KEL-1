@@ -6,18 +6,20 @@
 
 ## POIN-POIN MATERI
 
-* 📜 Deskripsi Singkat
-* 🧰 Struktur Proyek
-* ⚙️ Backend (Laravel)
-* 🧠 Model AI (Flask + Roboflow)
-* 📱 Aplikasi Mobile (Flutter)
-* 👨‍💼 Tim Pengembang
+* 📜 [Deskripsi Singkat](#deskripsi-singkat)
+* 🧰 [Struktur Proyek](#struktur-proyek)
+* ⚙️ [Backend (Laravel)](#backend-laravel)
+* 🧠 [Model AI (Flask + Roboflow)](#model-ai-flask--roboflow)
+* 📱 [Aplikasi Mobile (Flutter)](#aplikasi-mobile-flutter)
+* 👨‍💼 [Tim Pengembang](#tim-pengembang)
 
 ---
 
 <a name="bahasa-indonesia"></a>
 
 ## 🇮🇩 Bahasa Indonesia
+
+<a name="deskripsi-singkat"></a>
 
 ### 📜 Deskripsi Singkat
 
@@ -31,6 +33,8 @@ Pengguna dapat mengirim laporan kerusakan, melihat status, serta memberikan prog
 
 ---
 
+<a name="struktur-proyek"></a> <a name="struktur-proyek"></a>
+
 ### 🧰 Struktur Proyek
 
 ```
@@ -40,6 +44,8 @@ Pengguna dapat mengirim laporan kerusakan, melihat status, serta memberikan prog
 ```
 
 ---
+
+<a name="backend-laravel"></a> <a name="backend-laravel"></a>
 
 ### ⚙️ Backend (Laravel)
 
@@ -64,6 +70,8 @@ php artisan serve
 
 ---
 
+<a name="model-ai-flask--roboflow"></a> <a name="model-ai-flask--roboflow"></a>
+
 ### 🧠 Model AI (Flask + Roboflow)
 
 * Menerima gambar via `POST /predict`
@@ -81,6 +89,8 @@ python main.py
 ```
 
 ---
+
+<a name="aplikasi-mobile-flutter"></a> <a name="aplikasi-mobile-flutter"></a>
 
 ### 📱 Aplikasi Mobile (Flutter)
 
@@ -127,6 +137,8 @@ Users can submit damage reports, track progress, and rate repairs. Admins verify
 ```
 
 ---
+
+<a name="backend-laravel"></a>
 
 ### ⚙️ Backend (Laravel)
 
@@ -189,7 +201,9 @@ flutter run
 
 ---
 
-## 👨‍💼 Team Members
+<a name="tim-pengembang"></a> <a name="tim-pengembang"></a>
+
+## 👨‍💼 Tim Pengembang
 
 * **Rosul Iman** – Backend & AI Integration
 * **Olza Raflita** – UI/UX & Reporting
