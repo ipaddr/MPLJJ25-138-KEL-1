@@ -1,26 +1,37 @@
-
 # 📚 Sistem Pelaporan Kerusakan Sekolah (MPLJJ25-138-KEL-1)
 
 [Baca dalam Bahasa Indonesia](#bahasa-indonesia) | [Read in English](#english)
 
 ---
 
-<a name="bahasa-indonesia"></a>
-## Bahasa Indonesia
+## POIN-POIN MATERI
 
-### 📝 Deskripsi Singkat
+* 📜 Deskripsi Singkat
+* 🧰 Struktur Proyek
+* ⚙️ Backend (Laravel)
+* 🧠 Model AI (Flask + Roboflow)
+* 📱 Aplikasi Mobile (Flutter)
+* 👨‍💼 Tim Pengembang
+
+---
+
+<a name="bahasa-indonesia"></a>
+
+## 🇮🇩 Bahasa Indonesia
+
+### 📜 Deskripsi Singkat
 
 Sistem ini merupakan platform pelaporan dan analisis kerusakan fasilitas sekolah berbasis mobile dan web, terdiri dari tiga komponen utama:
 
-- 📱 **Aplikasi Flutter** untuk pelaporan oleh masyarakat
-- 🌐 **Backend Laravel** sebagai API & logika bisnis
-- 🧠 **Model AI (Flask + Roboflow)** untuk analisis otomatis tingkat kerusakan dari gambar
+* 📱 **Aplikasi Flutter** untuk pelaporan oleh masyarakat
+* 🌐 **Backend Laravel** sebagai API & logika bisnis
+* 🧠 **Model AI (Flask + Roboflow)** untuk analisis otomatis tingkat kerusakan dari gambar
 
 Pengguna dapat mengirim laporan kerusakan, melihat status, serta memberikan progres dan rating. Admin bertugas memverifikasi laporan, menganalisis dengan AI, dan memberikan tanggapan atau progres pembangunan.
 
 ---
 
-### 🧱 Struktur Proyek
+### 🧰 Struktur Proyek
 
 ```
 📁 backend/       → Laravel API
@@ -33,12 +44,14 @@ Pengguna dapat mengirim laporan kerusakan, melihat status, serta memberikan prog
 ### ⚙️ Backend (Laravel)
 
 #### Fitur Utama
-- Autentikasi pengguna & admin
-- CRUD laporan, progres, sekolah, dan foto
-- Rating laporan & analisis AI
-- Endpoint lengkap (`routes/web.php`)
+
+* Autentikasi pengguna & admin
+* CRUD laporan, progres, sekolah, dan foto
+* Rating laporan & analisis AI
+* Endpoint lengkap (`routes/web.php`)
 
 #### Setup Singkat
+
 ```bash
 cd backend
 composer install
@@ -51,12 +64,14 @@ php artisan serve
 
 ---
 
-### 🤖 AI Model (Flask + Roboflow)
-- Menerima gambar via `POST /predict`
-- Memberikan klasifikasi: Rusak Ringan / Sedang / Berat
-- Gunakan key dan workflow Roboflow (bisa disesuaikan)
+### 🧠 Model AI (Flask + Roboflow)
+
+* Menerima gambar via `POST /predict`
+* Memberikan klasifikasi: Rusak Ringan / Sedang / Berat
+* Gunakan key dan workflow Roboflow (bisa disesuaikan)
 
 #### Setup Singkat
+
 ```bash
 cd model_ai
 python -m venv venv
@@ -70,13 +85,15 @@ python main.py
 ### 📱 Aplikasi Mobile (Flutter)
 
 #### Fitur Utama
-- Login & Registrasi
-- Tambah laporan dengan gambar
-- Lihat status & progres
-- Rating laporan & upload progres baru
-- Khusus admin: analisis laporan & status
+
+* Login & Registrasi
+* Tambah laporan dengan gambar
+* Lihat status & progres
+* Rating laporan & upload progres baru
+* Khusus admin: analisis laporan & status
 
 #### Setup Singkat
+
 ```bash
 cd report_school
 flutter pub get
@@ -85,22 +102,23 @@ flutter run
 
 ---
 
-<a name="english"></a
-## English
+<a name="english"></a>
 
-### 📝 Overview
+## 🇬🇧 English
+
+### 📜 Overview
 
 This is a mobile and web-based school issue reporting and analysis system consisting of:
 
-- 📱 **Flutter mobile app** for user reporting
-- 🌐 **Laravel backend API**
-- 🧠 **AI image analysis using Flask + Roboflow**
+* 📱 **Flutter mobile app** for user reporting
+* 🌐 **Laravel backend API**
+* 🧠 **AI image analysis using Flask + Roboflow**
 
 Users can submit damage reports, track progress, and rate repairs. Admins verify reports, run AI-based analysis, and manage repair updates.
 
 ---
 
-### 🧱 Project Structure
+### 🧰 Project Structure
 
 ```
 📁 backend/       → Laravel API
@@ -113,12 +131,14 @@ Users can submit damage reports, track progress, and rate repairs. Admins verify
 ### ⚙️ Backend (Laravel)
 
 #### Key Features
-- Authentication (User/Admin)
-- Report, progress, school, and photo management
-- AI analysis integration
-- Full API coverage via `routes/web.php`
+
+* Authentication (User/Admin)
+* Report, progress, school, and photo management
+* AI analysis integration
+* Full API coverage via `routes/web.php`
 
 #### Quick Setup
+
 ```bash
 cd backend
 composer install
@@ -131,13 +151,14 @@ php artisan serve
 
 ---
 
-### 🤖 AI Model (Flask + Roboflow)
+### 🧠 AI Model (Flask + Roboflow)
 
-- Receives image via `POST /predict`
-- Returns classifications: Minor / Moderate / Severe Damage
-- Uses Roboflow API Key & workflow (editable in `main.py`)
+* Receives image via `POST /predict`
+* Returns classifications: Minor / Moderate / Severe Damage
+* Uses Roboflow API Key & workflow (editable in `main.py`)
 
 #### Quick Setup
+
 ```bash
 cd model_ai
 python -m venv venv
@@ -151,13 +172,15 @@ python main.py
 ### 📱 Mobile App (Flutter)
 
 #### Key Features
-- Login & registration
-- Submit reports with images
-- View progress and status
-- Rate reports & upload progress
-- Admin features: report analysis & status control
+
+* Login & registration
+* Submit reports with images
+* View progress and status
+* Rate reports & upload progress
+* Admin features: report analysis & status control
 
 #### Quick Setup
+
 ```bash
 cd report_school
 flutter pub get
@@ -166,12 +189,12 @@ flutter run
 
 ---
 
-## 👨‍💻 Team Members
+## 👨‍💼 Team Members
 
-- **Rosul Iman** – Backend & AI Integration  
-- **Olza Raflita** – UI/UX & Laporan  
-- **Frans Pigai** – Progress & Dokumentasi
+* **Rosul Iman** – Backend & AI Integration
+* **Olza Raflita** – UI/UX & Reporting
+* **Frans Pigai** – Progress & Documentation
 
 ---
 
-> 🎯 Proyek ini dikembangkan untuk memenuhi Tugas Akhir Mobile Programming Lanjut di Universitas Negeri Padang – 2025.
+> 🌟 This project was developed as a Final Assignment for the Advanced Mobile Programming course at Universitas Negeri Padang – 2025.
