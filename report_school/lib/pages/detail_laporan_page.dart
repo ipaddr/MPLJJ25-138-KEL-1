@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:report_school/component/card_view/card_laporan_detail_admin.dart';
+import 'package:report_school/component/card_view/card_laporan_detail.dart';
 import '../component/card_view/card_file_pendukung.dart';
 import '../providers/get_laporan_detail_provider.dart';
+import '../providers/auth_provider.dart';
 
 class DetailLaporanPage extends StatefulWidget {
   final int laporanId;
@@ -17,7 +19,6 @@ class _DetailLaporanPageState extends State<DetailLaporanPage> {
   @override
   void initState() {
     super.initState();
-    // Ambil detail laporan saat halaman dibuka
     Future.microtask(() {
       // ignore: use_build_context_synchronously
       final provider = Provider.of<GetDetailLaporanProvider>(context, listen: false);
@@ -27,6 +28,8 @@ class _DetailLaporanPageState extends State<DetailLaporanPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isAdmin = context.watch<AuthProvider>().isAdmin;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detail Laporan'),
@@ -51,7 +54,9 @@ class _DetailLaporanPageState extends State<DetailLaporanPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                CardDetailLaporanAdmin(laporan: laporan),
+                isAdmin
+                    ? CardDetailLaporanAdmin(laporan: laporan)
+                    : CardDetailLaporan(laporan: laporan),
                 CardFilePendukung(
                   idLaporan: laporan.id,
                   fotoPaths: laporan.fotoUrls,

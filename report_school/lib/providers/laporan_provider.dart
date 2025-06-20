@@ -8,6 +8,8 @@ import '../models/laporan.dart';
 import '../models/tag_foto.dart';
 import '../utils/image_utils.dart';
 import '../config/api.dart';
+import 'package:path_provider/path_provider.dart';
+
 
 
 class LaporanResult {
@@ -332,4 +334,112 @@ class LaporanProvider with ChangeNotifier {
       return [];
     }
   }
+
+  Future<Map<String, dynamic>?> analisisLaporanGambar(File gambar) async {
+  try {
+    final uri = Uri.parse('http://10.0.2.2:5000/predict');
+
+    final request = http.MultipartRequest('POST', uri);
+    request.files.add(await http.MultipartFile.fromPath('image', gambar.path));
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> dataList = jsonDecode(response.body);
+      debugPrint('Hasil Analisis: $dataList');
+
+      if (dataList.isEmpty || !dataList.first.containsKey('school_damage_classifier_predictions')) {
+        debugPrint('Tidak ada prediksi ditemukan.');
+        return null;
+      }
+
+      final predictionData = dataList.first['school_damage_classifier_predictions'];
+      final jenis = predictionData['top'] ?? '';
+      final confidence = predictionData['confidence'] ?? 0.0;
+
+      final hasil = {
+        "rusak_ringan": 0.0,
+        "rusak_sedang": 0.0,
+        "rusak_berat": 0.0,
+        "items": [
+          {
+            "kelas": jenis,
+            "confidence": confidence
+          }
+        ]
+      };
+
+      if (jenis.contains("ringan")) {
+        hasil["rusak_ringan"] = confidence;
+      } else if (jenis.contains("sedang")) {
+        hasil["rusak_sedang"] = confidence;
+      } else if (jenis.contains("berat")) {
+        hasil["rusak_berat"] = confidence;
+      }
+
+      return hasil;
+    } else {
+      debugPrint('Analisis gagal: ${response.body}');
+      return null;
+    }
+  } catch (e) {
+    debugPrint('Error analisis: $e');
+    return null;
+  }
+}
+
+Future<Map<String, dynamic>?> analisisSemuaGambarLaporan(List<String> urlList) async {
+  int total = 0;
+  int ringan = 0;
+  int sedang = 0;
+  int berat = 0;
+
+  List<Map<String, dynamic>> itemList = [];
+
+  for (String url in urlList) {
+    try {
+      final response = await http.get(Uri.parse(url));
+      final tempDir = await getTemporaryDirectory();
+      final tempFile = File('${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg');
+      await tempFile.writeAsBytes(response.bodyBytes);
+
+      final result = await analisisLaporanGambar(tempFile);
+
+      if (result != null) {
+        total++;
+        final items = result["items"];
+        itemList.addAll(items);
+
+        final kelas = items.first["kelas"] ?? "";
+
+        if (kelas.contains("ringan")) {
+          ringan++;
+        } else if (kelas.contains("sedang")) {
+          sedang++;
+        } else if (kelas.contains("berat")) {
+          berat++;
+        }
+      }
+    } catch (e) {
+      debugPrint("Gagal proses gambar dari URL $url: $e");
+    }
+  }
+
+  if (total == 0) return null;
+
+  // Hitung persentase
+  final double persenRingan = ringan / total;
+  final double persenSedang = sedang / total;
+  final double persenBerat = berat / total;
+
+  return {
+    "rusak_ringan": persenRingan,
+    "rusak_sedang": persenSedang,
+    "rusak_berat": persenBerat,
+    "items": itemList,
+  };
+}
+
+ 
 }

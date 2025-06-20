@@ -1,0 +1,29 @@
+# Cara Menjalankan Aplikasi Flask dengan Roboflow Workflow
+
+## 1. Buat dan Aktifkan Virtual Environment
+Windows:
+> python -m venv venv
+> venv\Scripts\activate
+
+Mac/Linux:
+$ python3 -m venv venv
+$ source venv/bin/activate
+
+## 2. Install Dependencies
+(venv) > pip install -r requirement.txt
+
+## 3. Jalankan Server Flask
+(venv) > python main.py
+
+## 4. Tes Endpoint (POST /predict)
+Kirim request POST ke:
+http://localhost:5000/predict
+
+Body: multipart/form-data
+Field: image = [file gambar JPG/PNG]
+
+Contoh pakai curl:
+curl -X POST -F image=@atap.jpg http://localhost:5000/predict
+
+## Catatan:
+- Ganti API key dan workflow ID sesuai dengan proyek Roboflow milikmu.
