@@ -1,11 +1,12 @@
 
 # 📚 Sistem Pelaporan Kerusakan Sekolah (MPLJJ25-138-KEL-1)
 
-[🇮🇩 Baca dalam Bahasa Indonesia](#bahasa-indonesia) | [🇬🇧 Read in English](#english)
+[Baca dalam Bahasa Indonesia](#bahasa-indonesia) | [Read in English](#english)
 
 ---
 
-## 🇮🇩 Bahasa Indonesia
+<a name="bahasa-indonesia"></a>
+## Bahasa Indonesia
 
 ### 📝 Deskripsi Singkat
 
@@ -84,7 +85,8 @@ flutter run
 
 ---
 
-## 🇬🇧 English
+<a name="english"></a
+## English
 
 ### 📝 Overview
 
