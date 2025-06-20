@@ -1,0 +1,30 @@
+# Abaikan virtual environment Python
+venv/
+
+# Abaikan file environment atau credential
+.env
+
+# Abaikan file model AI (kalau suatu saat kamu tambahkan)
+*.pt
+*.onnx
+*.pb
+*.h5
+*.tflite
+*.ckpt
+*.weights
+
+# Abaikan file konfigurasi/model dari Roboflow atau YOLO
+*.yaml
+*.cfg
+*.json
+
+# Abaikan folder hasil training atau prediksi
+runs/
+models/
+logs/
+
+# File cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
